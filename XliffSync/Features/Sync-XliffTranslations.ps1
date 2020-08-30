@@ -198,5 +198,3 @@ function Sync-XliffTranslations {
 
     $mergedDocument.SaveToFilePath($targetPath);
 }
-
-Export-ModuleMember -Function Sync-XliffTranslations

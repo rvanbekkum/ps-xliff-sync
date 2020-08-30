@@ -1,7 +1,8 @@
 class XlfDocument {
 
     hidden [System.Xml.XmlNode] $root;
-    hidden [System.Xml.XmlNode[]] $allTranslationUnitNodes;
+    hidden [System.Xml.XmlNode] $cachedImportParentNode;
+    hidden [System.Xml.XmlNode[]] $cachedTranslationUnitNodes;
     
     [string] $developerNoteDesignation;
     [string] $xliffGeneratorNoteDesignation;
@@ -100,6 +101,32 @@ class XlfDocument {
 
     [System.Xml.XmlNode] FindTranslationUnitBySourceText([string] $sourceText) {
         return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+    }
+
+    [void] ImportUnit([System.Xml.XmlNode] $unit) {
+        $newUnit = $this.root.OwnerDocument.ImportNode($unit, $true);
+
+        [System.Xml.XmlNode] $parentNode = $this.cachedImportParentNode;
+        if (-not $this.cachedImportParentNode) {
+            switch ($this.Version()) {
+                "1.2" { 
+                    # Parent will be the first 'group' or 'body' node.
+                    $parentNode = [XlfDocument]::GetNode('group', $this.root);
+                    if (-not $parentNode) {
+                        $parentNode = [XlfDocument]::GetNode('body', $this.root);
+                    }
+                    break;
+                }
+            }
+
+            if (-not $parentNode) {
+                return;
+            }
+
+            $this.cachedImportParentNode = $parentNode;
+        }
+
+        $parentNode.AppendChild($newUnit);
     }
 
     [void] MergeUnit([System.Xml.XmlNode] $sourceUnit, [System.Xml.XmlNode] $targetUnit,[string] $translation) {
@@ -262,8 +289,8 @@ class XlfDocument {
     }
 
     [System.Xml.XmlNode[]] TranslationUnitNodes() {
-        if ($this.allTranslationUnitNodes) {
-            return $this.allTranslationUnitNodes;
+        if ($this.cachedTranslationUnitNodes) {
+            return $this.cachedTranslationUnitNodes;
         }
 
         [System.Xml.XmlNode[]] $transUnits = @();
@@ -285,10 +312,11 @@ class XlfDocument {
                         $transUnits += $unitsInGroups;
                     }
                 }
+                break;
             }
         }
 
-        $this.allTranslationUnitNodes = $transUnits;
+        $this.cachedTranslationUnitNodes = $transUnits;
 
         return $transUnits;
     }
@@ -348,14 +376,82 @@ class XlfDocument {
         return $null;
     }
 
+    static [XlfDocument] CreateCopyFrom([XlfDocument] $baseXlfDoc, [string] $language) {
+        [xml] $baseXmlDoc = $baseXlfDoc.root.OwnerDocument;
+        [System.Xml.XmlNode] $xmlDecl = $baseXmlDoc.ChildNodes.Item(0);
+        [System.Xml.XmlNode] $rootNode = $baseXmlDoc.ChildNodes.Item(1);
+
+        [XlfDocument] $newXfDoc = [XlfDocument]::new();
+        [xml] $newXmlDoc = [System.Xml.XmlDocument]::new();
+        $newXmlDecl = $newXmlDoc.ImportNode($xmlDecl, $false);
+        $newXmlDoc.AppendChild($newXmlDecl);
+
+        $newRootNode = $newXmlDoc.ImportNode($rootNode, $true);
+        $newXmlDoc.AppendChild($newRootNode);
+        $newXfDoc.root = $newRootNode;
+
+        switch ($baseXlfDoc.Version()) {
+            "1.2" {
+                $newFileNode = $newRootNode.ChildNodes.Item(0);
+                $newFileNode.'target-language' = $language;
+                break;
+            }
+            "2.0" {
+                $newRootNode.'trgLang' = $language;
+                break;
+            }
+        }
+
+        return $newXfDoc;
+    }
+
+    static [XlfDocument] CreateEmptyDocFrom([XlfDocument] $baseXlfDoc, [string] $language) {
+        [xml] $baseXmlDoc = $baseXlfDoc.root.OwnerDocument;
+        [System.Xml.XmlNode] $xmlDecl = $baseXmlDoc.ChildNodes.Item(0);
+        [System.Xml.XmlNode] $rootNode = $baseXmlDoc.ChildNodes.Item(1);
+
+        [XlfDocument] $newXfDoc = [XlfDocument]::new();
+        [xml] $newXmlDoc = [System.Xml.XmlDocument]::new();
+        $newXmlDecl = $newXmlDoc.ImportNode($xmlDecl, $false);
+        $newXmlDoc.AppendChild($newXmlDecl);
+
+        $newRootNode = $newXmlDoc.ImportNode($rootNode, $false);
+        $newXmlDoc.AppendChild($newRootNode);
+
+        switch ($baseXlfDoc.Version()) {
+            "1.2" { 
+                $baseFileNode = $rootNode.ChildNodes.Item(0);
+                $newFileNode = $newXmlDoc.ImportNode($baseFileNode, $false);
+                $newFileNode.'target-language' = $language;
+                $newRootNode.AppendChild($newFileNode);
+
+                [System.Xml.XmlNode] $newBodyNode = $newXmlDoc.CreateNode([System.Xml.XmlNodeType]::Element, "body", $newRootNode.NamespaceURI);
+                $newFileNode.AppendChild($newBodyNode);
+
+                [System.Xml.XmlNode] $newGroupNode = $newXmlDoc.CreateNode([System.Xml.XmlNodeType]::Element, "group", $newRootNode.NamespaceURI);
+                ([System.Xml.XmlElement] $newGroupNode).SetAttribute('id', 'body');
+                $newBodyNode.AppendChild($newGroupNode);
+                break;
+            }
+        }
+
+        $newXfDoc.root = $newRootNode;
+        return $newXfDoc;
+    }
+
     hidden static [XlfDocument] LoadFromRootNode([System.Xml.XmlNode] $rootNode) {
-        $doc = [XlfDocument]::new();
+        [XlfDocument] $doc = [XlfDocument]::new();
         $doc.root = $rootNode;
         return $doc;
     }
 
-    static [XlfDocument] LoadFromXmlDocument([xml] $document) {
-        return [XlfDocument]::LoadFromRootNode($document.ChildNodes.Item(1));
+    static [XlfDocument] LoadFromXmlDocument([xml] $xmlDoc) {
+        [System.Xml.XmlNode] $xmlDecl = $xmlDoc.ChildNodes.Item(0);
+        $xmlDecl.'encoding' = $xmlDecl.'encoding'.ToUpper();
+
+        [System.Xml.XmlNode] $rootNode = $xmlDoc.ChildNodes.Item(1);
+
+        return [XlfDocument]::LoadFromRootNode($rootNode);
     }
 
     static [XlfDocument] LoadFromPath([string] $filePath) {

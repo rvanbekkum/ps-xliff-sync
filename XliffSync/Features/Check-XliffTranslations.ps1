@@ -95,5 +95,3 @@ function HasMissingTranslation {
 
     return $false;
 }
-
-Export-ModuleMember -Function Check-XliffTranslations
