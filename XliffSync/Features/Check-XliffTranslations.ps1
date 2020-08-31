@@ -93,7 +93,7 @@ function Check-XliffTranslations {
 
         if ($checkForMissing) {
             if (HasMissingTranslation -targetDocument $targetDocument -unit $unit -missingTranslationText $missingTranslation) {
-                #TODO: SetState attribute
+                $targetDocument.SetState($unit, [XlfTranslationState]::MissingTranslation);
                 $missingTranslationUnits += $unit;
             }
             #TODO: Check for Need Work translation / Problem
@@ -101,8 +101,9 @@ function Check-XliffTranslations {
         }
     }
 
+    [int] $missingCount = $missingTranslationUnits.Count;
     if ($checkForMissing) {
-        Write-Host "Detected: $($missingTranslationUnits.Count) missing translation(s).";
+        Write-Host "Detected: $missingCount missing translation(s).";
 
         if ($printProblems -and $missingTranslationUnits) {
             [string] $detectedMessage = "Missing translation in unit '{0}'.";
@@ -116,8 +117,9 @@ function Check-XliffTranslations {
         }
     }
 
+    [int] $needWorkCount = $needWorkTranslationUnits.Count;
     if ($checkForProblems) {
-        Write-Host "Detected: $($needWorkTranslationUnits.Count) translation(s) that need work.";
+        Write-Host "Detected: $needWorkCount translation(s) that need work.";
 
         if ($printProblems -and $needWorkTranslationUnits) {
             [string] $detectedMessage = "Translation issue in unit '{0}'.";
@@ -133,6 +135,7 @@ function Check-XliffTranslations {
 
     [bool] $issueDetectedInFile = ($missingCount -gt 0) -or ($needWorkCount -gt 0);
     if ($issueDetectedInFile -or $problemResolvedInFile) {
+        Write-Host "Saving document to $targetPath";
         $targetDocument.SaveToFilePath($targetPath);
     }
 }

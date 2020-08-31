@@ -363,7 +363,8 @@ class XlfDocument {
     [void] SetState([System.Xml.XmlNode] $unit, [XlfTranslationState] $newTranslationState) {
         [System.Xml.XmlNode] $stateNode = $this.TryGetStateNode($unit);
         if ((-not $stateNode) -and ($this.Version() -eq "1.2")) {
-            $this.CreateTargetNode($unit, "", $newTranslationState);
+            [System.Xml.XmlNode] $newTargetNode = $this.CreateTargetNode($unit, "", $newTranslationState);
+            $this.AppendTargetNode($unit, $newTargetNode);
         }
         elseif ($stateNode) {
             $this.UpdateStateAttributes($stateNode, $newTranslationState);
