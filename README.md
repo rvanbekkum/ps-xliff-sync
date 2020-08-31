@@ -63,14 +63,14 @@ Translation units without translations will be marked with `state="needs-transla
 
 Please check the documentation of the cmdlet for more information and the available parameters.
 
-### Extract DIFF XLIFF File
+### Get XLIFF Translation Files Diff
 
-The `Extract-XliffTranslationsDiff` cmdlet will compare an original and new version of an XLIFF file and produce a new DIFF XLIFF file that contains all the translation units that were added or whose source text was changed.
+The `Get-XliffTranslationsDiff` cmdlet will compare an original and new version of an XLIFF file and produce a new XLIFF Diff file that contains all the translation units that were added or whose source text was changed.
 
 An example usage:
 
 ```powershell
-Extract-XliffTranslationsDiff -originalPath "C:\MyProject\OriginalVersion.xlf" -newPath "C:\MyProject\NewVersion.xlf" -diffPath "C:\MyProject\Diff.xlf" -reportProgress
+Get-XliffTranslationsDiff -originalPath "C:\MyProject\OriginalVersion.xlf" -newPath "C:\MyProject\NewVersion.xlf" -diffPath "C:\MyProject\Diff.xlf" -reportProgress
 ```
 
 Please check the documentation of the cmdlet for more information and the available parameters.

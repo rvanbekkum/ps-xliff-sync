@@ -14,7 +14,7 @@
  .Parameter reportProgress
   Specifies whether the command should report progress.
 #>
-function Extract-XliffTranslationsDiff {
+function Get-XliffTranslationsDiff {
     Param (
         [Parameter(Mandatory=$true)]
         [string] $originalPath,
