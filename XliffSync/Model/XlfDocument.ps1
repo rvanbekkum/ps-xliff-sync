@@ -22,7 +22,6 @@ class XlfDocument {
 
     [boolean] Valid() {
         $hasRoot = $null -ne $this.root;
-        Write-Output $this.root
         $hasVersion = $null -ne $this.Version();
         $hasSourceLanguage = $null -ne $this.GetSourceLanguage();
         return $hasRoot -and $hasVersion -and $hasSourceLanguage;
@@ -290,12 +289,12 @@ class XlfDocument {
 
         [boolean] $needsTranslation = $this.GetUnitNeedsTranslation($sourceUnit);
         if ($needsTranslation -and (-not $targetNode)) {
-            #TODO: State attributes
+            [XlfTranslationState] $newTranslationState = [XlfTranslationState]::Translated;
             if (-not $translation) {
                 $translation = $this.missingTranslation;
+                $newTranslationState = [XlfTranslationState]::MissingTranslation;
             }
-
-            $targetNode = $this.CreateTargetNode($sourceUnit, $translation);
+            $targetNode = $this.CreateTargetNode($sourceUnit, $translation, $newTranslationState);
         }
         elseif ((-not $needsTranslation) -and $targetNode) {
             $this.DeleteTargetNode($sourceUnit);
@@ -303,23 +302,150 @@ class XlfDocument {
 
         if ($needsTranslation -and $targetNode) {
             if ($translation) {
-                Write-Host "2 Add Translation $translation";
                 $targetNode.InnerText = $translation;
-                #TODO: State attributes
+                if ($this.Version() -eq "1.2") {
+                    $this.UpdateStateAttributes($targetNode, [XlfTranslationState]::Translated);
+                }
             }
 
             $this.AppendTargetNode($sourceUnit, $targetNode);
         }
     }
 
-    [System.Xml.XmlNode] CreateTargetNode([System.Xml.XmlNode] $parentUnit, [string] $translation) {
+    [void] UpdateStateAttributes([System.Xml.XmlElement] $stateNode, [XlfTranslationState] $translationState) {
+        switch ($this.Version()) {
+            "1.2" {
+                switch ($translationState) {
+                    ([XlfTranslationState]::MissingTranslation) {
+                        $stateNode.SetAttribute('state', 'needs-translation');
+                        break;
+                    }
+                    ([XlfTranslationState]::NeedsWorkTranslation) {
+                        $stateNode.SetAttribute('state', 'needs-adaptation');
+                        break;
+                    }
+                    ([XlfTranslationState]::Translated) {
+                        $stateNode.SetAttribute('state', 'translated');
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    [XlfTranslationState] GetState([System.Xml.XmlNode] $unit) {
+        [System.Xml.XmlNode] $stateNode = $this.TryGetStateNode($unit);
+        if ($stateNode -and $stateNode.HasAttributes) {
+            switch ($this.Version()) {
+                "1.2" {
+                    [string] $stateValue = $stateNode.Attributes['state'];
+                    if ($stateValue) {
+                        switch ($stateValue) {
+                            'needs-translation' {
+                                return [XlfTranslationState]::MissingTranslation;
+                            }
+                            'needs-adaptation' {
+                                return [XlfTranslationState]::NeedsWorkTranslation;
+                            }
+                            'translated' {
+                                return [XlfTranslationState]::Translated;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return $null;
+    }
+
+    [void] SetState([System.Xml.XmlNode] $unit, [XlfTranslationState] $newTranslationState) {
+        [System.Xml.XmlNode] $stateNode = $this.TryGetStateNode($unit);
+        if ((-not $stateNode) -and ($this.Version() -eq "1.2")) {
+            $this.CreateTargetNode($unit, "", $newTranslationState);
+        }
+        elseif ($stateNode) {
+            $this.UpdateStateAttributes($stateNode, $newTranslationState);
+        }
+    }
+
+    hidden [System.Xml.XmlNode] TryGetStateNode([System.Xml.XmlNode] $unit) {
+        [string] $stateNodeTag = 'target';
+        switch ($this.Version()) {
+            "1.2" {
+                $stateNodeTag = 'target';
+                break;
+            }
+        }
+
+        return [XlfDocument]::GetNode($stateNodeTag, $unit);
+    }
+
+    [void] SetXliffSyncNote([System.Xml.XmlNode] $unit, [string] $noteText) {
+        [xml] $xmlDoc = $this.root.OwnerDocument;
+        [System.Xml.XmlElement] $noteNode = $xmlDoc.CreateNode([System.Xml.XmlNodeType]::Element, 'note', $this.root.NamespaceURI);
+        [string] $fromAttributeValue = "XLIFF Sync";
+
+        [System.Xml.XmlNode] $notesParent = $unit;
+        switch ($this.Version()) {
+            "1.2" {
+                $noteNode.SetAttribute('from', $fromAttributeValue);
+                break;
+            }
+            Default {
+                return;
+            }
+        }
+
+        $noteNode.SetAttribute('annotates', 'general');
+        $noteNode.SetAttribute('priority', '1');
+        $noteNode.InnerText = $noteText;
+
+        [System.Xml.XmlNode] $existingNote = $this.GetExistingXliffSyncNote($notesParent);
+        [System.Xml.XmlNode] $targetChildNode = $unit.ChildNodes | Where-Object { $_.Name -eq "target" } | Select-Object -First 1;
+
+        if ($existingNote) {
+            $notesParent.ReplaceChild($existingNote, $noteNode);
+        }
+        elseif ($targetChildNode -and ($this.Version() -eq "1.2")) {
+            $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
+            $unit.InsertAfter($targetChildNode.PreviousSibling, $noteNode);
+        }
+        else {
+            $notesParent.AppendChild($noteNode);
+        }
+    }
+
+    hidden [System.Xml.XmlNode] GetExistingXliffSyncNote([System.Xml.XmlNode] $notesParent) {
+        if (-not $notesParent) {
+            return $null;
+        }
+
+        [string] $categoryAttributeName = 'from';
+        switch ($this.Version()) {
+            "1.2" {
+                $categoryAttributeName = 'from';
+                break;
+            }
+        }
+        [string] $categoryAttributeValue = "XLIFF Sync";
+        return $notesParent.ChildNodes | Where-Object { ($_.name -eq 'note') -and ($_.Attributes) -and ($_.Attributes[$categoryAttributeName] -eq $categoryAttributeValue)} | Select-Object -First 1;
+    }
+
+    [System.Xml.XmlNode] CreateTargetNode([System.Xml.XmlNode] $parentUnit, [string] $translation, [XlfTranslationState] $newTranslationState) {
         [xml] $xmlDoc = $this.root.OwnerDocument;
         [System.Xml.XmlNode] $targetNode = $xmlDoc.CreateNode([System.Xml.XmlNodeType]::Element, "target", $this.root.NamespaceURI);
         $xmlDoc.ImportNode($targetNode, $true);
 
+        if ($newTranslationState -and ($this.Version() -eq "1.2")) {
+            $this.UpdateStateAttributes($targetNode, $newTranslationState);
+        }
+
         if ($translation) {
             $targetNode.InnerText = $translation;
         }
+
         return $targetNode;
     }
 
@@ -334,7 +460,6 @@ class XlfDocument {
                 [System.Xml.XmlNode] $targetChildNode = $unit.ChildNodes | Where-Object { $_.Name -eq "target" } | Select-Object -First 1;
                 
                 if ($targetChildNode) {
-                    Write-Host "Replace Child $targetChildNode with $targetNode"
                     $unit.ReplaceChild($targetNode, $targetChildNode);
                 }
                 elseif ($sourceChildNode) {
@@ -342,7 +467,6 @@ class XlfDocument {
                     $unit.InsertAfter($sourceChildNode.PreviousSibling, $targetNode);
                 }
                 else {
-                    Write-Host "AddLast $targetNode"
                     $unit.AppendChild($targetNode);
                 }
                 break;
@@ -578,4 +702,10 @@ class XlfDocument {
         [xml] $fileContentXml = Get-Content $filePath;
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
     }
+}
+
+enum XlfTranslationState {
+    MissingTranslation = 0
+    NeedsWorkTranslation = 1
+    Translated = 10
 }

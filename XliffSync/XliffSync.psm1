@@ -2,14 +2,13 @@
 param()
 
 Write-Verbose $PSScriptRoot
-$classList = @(
+$modelList = @(
     'XlfDocument'
 )
 
-foreach($class in $classList)
+foreach($model in $modelList)
 {
-    Write-Verbose " Class: $class"
-    . "$psscriptroot\Classes\$class.ps1"
+    . "$psscriptroot\Model\$model.ps1"
 }
 
 Write-Verbose 'Import everything in sub folders folder'

@@ -87,13 +87,13 @@ function Sync-XliffTranslations {
         [Parameter(Mandatory=$false)]
         [switch] $copyFromSourceOverwrite, #TODO: Not implemented yet
         [Parameter(Mandatory=$false)]
-        [boolean] $detectSourceTextChanges=$true, #TODO: Not implemented yet
+        [boolean] $detectSourceTextChanges=$true,
         [Parameter(Mandatory=$false)]
         [switch] $ignoreLineEndingTypeChanges, #TODO: Not implemented yet
         [Parameter(Mandatory=$false)]
-        [string] $missingTranslation="", #TODO: Not implemented yet
+        [string] $missingTranslation="",
         [Parameter(Mandatory=$false)]
-        [string] $needsWorkTranslationSubstate="xliffSync:needsWork", #TODO: Not implemented yet
+        [string] $needsWorkTranslationSubstate="xliffSync:needsWork", #TODO: Not implemented yet (XLIFF 2.0)
         [Parameter(Mandatory=$false)]
         [ValidateSet("None", "Id", "All")]
         [string] $unitMaps = "All",
@@ -103,11 +103,11 @@ function Sync-XliffTranslations {
 
     # Abort if both $targetPath and $targetLanguage are missing.
     if (-not $targetPath -and -not $targetLanguage) {
-        throw "Missing -targetPath or -targetLanguage parameter";
+        throw "Missing -targetPath or -targetLanguage parameter.";
     }
 
     # TEMPORARY: Abort if a parameter for an unimplemented feature is used.
-    if ($targetLanguage -or $parseFromDeveloperNote -or $copyFromSource -or $ignoreLineEndingTypeChanges -or $missingTranslation) {
+    if ($targetLanguage -or $parseFromDeveloperNote -or $copyFromSource -or $ignoreLineEndingTypeChanges) {
         throw "The parameters you entered are for one or more features that have not been implemented yet.";
     }
 
@@ -152,6 +152,7 @@ function Sync-XliffTranslations {
     [int] $unitCount = $mergedDocument.TranslationUnitNodes().Count;
     [int] $i = 0;
     [int] $onePercentCount = $unitCount / 100;
+    [int] $detectedSourceTextChanges = 0;
 
     Write-Host "Processing unit nodes... (Please be patient)";
     [string] $progressMessage = "Syncing translation units."
@@ -229,7 +230,25 @@ function Sync-XliffTranslations {
 
         $mergedDocument.MergeUnit($unit, $targetUnit, $translation);
 
-        #TODO: Later -- detectSourceTextChanges
+        if ($detectSourceTextChanges -and $targetUnit) {
+            [string] $mergedSourceText = $mergedDocument.GetUnitSourceText($unit);
+            [string] $mergedTranslText = $mergedDocument.GetUnitTranslation($unit);
+            [string] $origSourceText = $targetDocument.GetUnitSourceText($targetUnit);
+
+            if ($mergedSourceText -and $origSourceText -and $mergedTranslText) {
+                #TODO: $ignoreLineEndingTypeChanges
+
+                if ($mergedSourceText -ne $origSourceText) {
+                    $mergedDocument.SetXliffSyncNote($unit, 'Source text has changed. Please review the translation.');
+                    $mergedDocument.SetState($unit, [XlfTranslationState]::NeedsWorkTranslation);
+                    $detectedSourceTextChanges++;
+                }
+            }
+        }
+    }
+
+    if ($detectSourceTextChanges) {
+        Write-Host "Detected $detectedSourceTextChanges source text change(s).";
     }
 
     Write-Host "Saving document to $targetPath"
