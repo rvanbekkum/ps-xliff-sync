@@ -59,7 +59,7 @@ function Sync-XliffTranslations {
         [Parameter(Mandatory=$false)]
         [string] $targetPath,
         [Parameter(Mandatory=$false)]
-        [string] $targetLanguage, #TODO: Not implemented yet
+        [string] $targetLanguage,
         [Parameter(Mandatory=$false)]
         [string] $developerNoteDesignation="Developer",
         [Parameter(Mandatory=$false)]
@@ -112,7 +112,7 @@ function Sync-XliffTranslations {
     }
 
     # TEMPORARY: Abort if a parameter for an unimplemented feature is used.
-    if ($targetLanguage -or $parseFromDeveloperNote -or $copyFromSource -or $ignoreLineEndingTypeChanges) {
+    if ($parseFromDeveloperNote -or $copyFromSource -or $ignoreLineEndingTypeChanges) {
         throw "The parameters you entered are for one or more features that have not been implemented yet.";
     }
 
@@ -132,7 +132,8 @@ function Sync-XliffTranslations {
         $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
     }
     else {
-        #TODO: Create a new document for the $targetLanguage
+        $targetDocument = [XlfDocument]::CreateCopyFrom($mergedDocument, $targetLanguage);
+        $targetPath = $sourcePath -replace '(\.g)?\.xlf', ".$targetLanguage.xlf"
     }
     [string] $language = $targetDocument.GetTargetLanguage();
     if ($language) {
