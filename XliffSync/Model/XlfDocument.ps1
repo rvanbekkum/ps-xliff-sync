@@ -438,7 +438,7 @@ class XlfDocument {
         [System.Xml.XmlNode] $targetNode = $xmlDoc.CreateNode([System.Xml.XmlNodeType]::Element, "target", $this.root.NamespaceURI);
         $xmlDoc.ImportNode($targetNode, $true);
 
-        if ($newTranslationState -and ($this.Version() -eq "1.2")) {
+        if ($this.Version() -eq "1.2") {
             $this.UpdateStateAttributes($targetNode, $newTranslationState);
         }
 
