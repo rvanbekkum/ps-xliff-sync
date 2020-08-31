@@ -33,21 +33,22 @@ function Extract-XliffTranslationsDiff {
     Write-Host "Creating new empty diff document";
     [XlfDocument] $diffDocument = [XlfDocument]::CreateEmptyDocFrom($originalDocument, $newDocument.GetTargetLanguage());
 
-    Write-Host "Create Hash Map for original document's unit ids"
+    Write-Host "Creating Map in memory for original document's unit ids";
     $idMap = @{}
     $originalDocument.TranslationUnitNodes() | ForEach-Object {
         $unit = $_
         $idMap.Add($unit.'id', $originalDocument.GetUnitSourceText($unit));
     }
 
-    Write-Host "Retrieve translation units from new document"
+    Write-Host "Retrieving translation units from new document";
     [int] $unitCount = $newDocument.TranslationUnitNodes().Count;
     [int] $i = 0;
     [int] $onePercentCount = $unitCount / 100;
 
-    Write-Host "Processing unit nodes... (Please be patient)"
+    Write-Host "Processing unit nodes... (Please be patient)";
+    [string] $progressMessage = "Extracting new or changed units."
     if ($reportProgress) {
-        Write-Progress -Activity "Extracting new or changed units" -PercentComplete 0;
+        Write-Progress -Activity $progressMessage -PercentComplete 0;
     }
 
     $newDocument.TranslationUnitNodes() | ForEach-Object {
@@ -57,7 +58,7 @@ function Extract-XliffTranslationsDiff {
             $i++;
             if ($i % $onePercentCount -eq 0) {
                 $percentage = ($i / $unitCount) * 100;
-                Write-Progress -Activity "Extracting new or changed units" -PercentComplete $percentage;
+                Write-Progress -Activity $progressMessage -PercentComplete $percentage;
             }
         }
 
