@@ -31,7 +31,7 @@ function Get-XliffTranslationsDiff {
     Write-Host "Loading new document $newPath";
     [XlfDocument] $newDocument = [XlfDocument]::LoadFromPath($newPath);
     Write-Host "Creating new empty diff document";
-    [XlfDocument] $diffDocument = [XlfDocument]::CreateEmptyDocFrom($originalDocument, $newDocument.GetTargetLanguage());
+    [XlfDocument] $diffDocument = [XlfDocument]::CreateEmptyDocFrom($newDocument, $newDocument.GetTargetLanguage());
 
     Write-Host "Creating Map in memory for original document's unit ids";
     $idMap = @{}
