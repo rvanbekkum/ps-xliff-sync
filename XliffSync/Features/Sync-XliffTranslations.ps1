@@ -43,6 +43,10 @@
   Specifies the target tag content for units where the translation is missing.
   .Parameter needsWorkTranslationSubstate
   Specifies the substate to use for translations that need work in xlf2 files.
+  .Parameter unitMaps
+  Specifies for which search purposes this command should create in-memory maps in preparation of syncing.
+ .Parameter reportProgress
+  Specifies whether the command should report progress.
   .Parameter AzureDevOps
   Specifies whether to #TODO:
 #>
@@ -91,6 +95,9 @@ function Sync-XliffTranslations {
         [Parameter(Mandatory=$false)]
         [string] $needsWorkTranslationSubstate="xliffSync:needsWork", #TODO: Not implemented yet
         [Parameter(Mandatory=$false)]
+        [ValidateSet("None", "Id", "All")]
+        [string] $unitMaps = "All",
+        [switch] $reportProgress,
         [switch] $AzureDevOps #TODO: Not implemented yet
     )
 
@@ -104,6 +111,7 @@ function Sync-XliffTranslations {
         throw "The parameters you entered are for one or more features that have not been implemented yet.";
     }
 
+    Write-Host "Loading source document $sourcePath";
     [XlfDocument] $mergedDocument = [XlfDocument]::LoadFromPath($sourcePath);
     $mergedDocument.developerNoteDesignation = $developerNoteDesignation;
     $mergedDocument.xliffGeneratorNoteDesignation = $xliffGeneratorNoteDesignation;
@@ -115,6 +123,7 @@ function Sync-XliffTranslations {
 
     [XlfDocument] $targetDocument = $null;
     if ($targetPath) {
+        Write-Host "Loading target document $targetPath";
         $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
     }
     else {
@@ -122,15 +131,44 @@ function Sync-XliffTranslations {
     }
     [string] $language = $targetDocument.GetTargetLanguage();
     if ($language) {
+        Write-Host "Setting target language for merge document to $language";
         $mergedDocument.SetTargetLanguage($language);
     }
 
     $sourceTranslationsHashTable = @{};
-    $findByNotes = $findByXliffGeneratorNoteAndSource -or $findByXliffGeneratorAndDeveloperNote -or $findByXliffGeneratorNote;
-    $findByIsEnabled = $findByNotes -or $findBySourceAndDeveloperNote -or $findBySource -or $copyFromSource -or $parseFromDeveloperNote;
+    [bool] $findByXliffGenNotesIsEnabled = $findByXliffGeneratorNoteAndSource -or $findByXliffGeneratorAndDeveloperNote -or $findByXliffGeneratorNote;
+    [bool] $findByIsEnabled = $findByXliffGenNotesIsEnabled -or $findBySourceAndDeveloperNote -or $findBySource -or $copyFromSource -or $parseFromDeveloperNote;
+    if ($unitMaps -ne "None") {
+        Write-Host "Creating Maps in memory for target document's units.";
+        if ($unitMaps -eq "Id") {
+            $targetDocument.CreateUnitMaps($false, $false, $false, $false, $false);
+        }
+        else {
+            $targetDocument.CreateUnitMaps($findByXliffGeneratorNoteAndSource, $findByXliffGeneratorAndDeveloperNote, $findByXliffGeneratorNote, $findBySourceAndDeveloperNote, $findBySource);
+        }
+    }
+
+    Write-Host "Retrieving translation units from source document";
+    [int] $unitCount = $mergedDocument.TranslationUnitNodes().Count;
+    [int] $i = 0;
+    [int] $onePercentCount = $unitCount / 100;
+
+    Write-Host "Processing unit nodes... (Please be patient)";
+    [string] $progressMessage = "Syncing translation units."
+    if ($reportProgress) {
+        Write-Progress -Activity $progressMessage -PercentComplete 0;
+    }
 
     $mergedDocument.TranslationUnitNodes() | ForEach-Object {
         [System.Xml.XmlNode] $unit = $_;
+
+        if ($reportProgress) {
+            $i++;
+            if ($i % $onePercentCount -eq 0) {
+                $percentage = ($i / $unitCount) * 100;
+                Write-Progress -Activity $progressMessage -PercentComplete $percentage;
+            }
+        }
         
         # Find by ID.
         [System.Xml.XmlNode] $targetUnit = $targetDocument.FindTranslationUnit($unit.id);
@@ -140,7 +178,7 @@ function Sync-XliffTranslations {
             [string] $developerNote = $mergedDocument.GetUnitDeveloperNote($unit);
             [string] $sourceText = $mergedDocument.GetUnitSourceText($unit);
 
-            if ($findByNotes) {
+            if ($findByXliffGenNotesIsEnabled) {
                 [string] $xliffGeneratorNote = $mergedDocument.GetUnitXliffGeneratorNote($unit);
                 if ($xliffGeneratorNote) {
                     # Find by Xliff Generator Note + Source Text combination.
@@ -163,10 +201,8 @@ function Sync-XliffTranslations {
             if ((-not $targetUnit) -and $sourceText) {
                 # Find by Source + Developer Note combination (also matching on empty/undefined developer note).
                 if ($findBySourceAndDeveloperNote) {
-                    Write-Host "Searching by SourceDevNote!"
                     [System.Xml.XmlNode] $targetDocTranslUnit = $targetDocument.FindTranslationUnitBySourceTextAndDeveloperNote($sourceText, $developerNote);
                     if ($targetDocTranslUnit) {
-                        Write-Host "Found by SourceDevNote!"
                         $translation = $targetDocument.GetUnitTranslation($targetDocTranslUnit);
                     }
                 }
@@ -196,5 +232,6 @@ function Sync-XliffTranslations {
         #TODO: Later -- detectSourceTextChanges
     }
 
+    Write-Host "Saving document to $targetPath"
     $mergedDocument.SaveToFilePath($targetPath);
 }

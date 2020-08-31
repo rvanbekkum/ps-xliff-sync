@@ -3,6 +3,14 @@ class XlfDocument {
     hidden [System.Xml.XmlNode] $root;
     hidden [System.Xml.XmlNode] $cachedImportParentNode;
     hidden [System.Xml.XmlNode[]] $cachedTranslationUnitNodes;
+
+    hidden $idUnitMap;
+    hidden $xliffGeneratorNoteSourceUnitMap;
+    hidden $xliffGeneratorNoteDeveloperNoteUnitMap;
+    hidden $xliffGeneratorNoteUnitMap;
+    hidden $xliffGeneratorNote;
+    hidden $sourceDeveloperNoteUnitMap;
+    hidden $sourceUnitMap;
     
     [string] $developerNoteDesignation;
     [string] $xliffGeneratorNoteDesignation;
@@ -79,28 +87,139 @@ class XlfDocument {
         }
     }
 
+    [void] CreateUnitMaps([bool] $findByXliffGeneratorNoteAndSource, [bool] $findByXliffGeneratorAndDeveloperNote, [bool] $findByXliffGeneratorNote, [bool] $findBySourceAndDeveloperNote, [bool] $findBySource) {
+        [bool] $findByXliffGenNotesIsEnabled = $findByXliffGeneratorNoteAndSource -or $findByXliffGeneratorAndDeveloperNote -or $findByXliffGeneratorNote;
+        [bool] $findByIsEnabled = $findByXliffGenNotesIsEnabled -or $findBySourceAndDeveloperNote -or $findBySource;
+        
+        $this.idUnitMap = @{}
+        $this.xliffGeneratorNoteSourceUnitMap = @{};
+        $this.xliffGeneratorNoteDeveloperNoteUnitMap = @{};
+        $this.xliffGeneratorNoteUnitMap = @{};
+        $this.sourceDeveloperNoteUnitMap = @{};
+        $this.sourceUnitMap = @{};
+
+        $this.TranslationUnitNodes() | ForEach-Object {
+            $unit = $_;
+            if (-not $this.idUnitMap.Contains($unit.id)) {
+                $this.idUnitMap.Add($unit.id, $unit);
+            }
+
+            if ($findByIsEnabled) {
+                [string] $developerNote = $this.GetUnitDeveloperNote($unit);
+                [string] $sourceText = $this.GetUnitSourceText($unit);
+
+                if ($findByXliffGenNotesIsEnabled) {
+                    [string] $xliffGeneratorNote = $this.GetUnitXliffGeneratorNote($unit);
+
+                    if ($findByXliffGeneratorNoteAndSource) {
+                        $key = @($xliffGeneratorNote, $sourceText);
+                        if (-not $this.xliffGeneratorNoteSourceUnitMap.ContainsKey($key)) {
+                            $this.xliffGeneratorNoteSourceUnitMap.Add($key, $unit);
+                        }
+                    }
+                    if ($findByXliffGeneratorAndDeveloperNote) {
+                        $key = @($xliffGeneratorNote, $developerNote);
+                        if (-not $this.xliffGeneratorNoteDeveloperNoteUnitMap.ContainsKey($key)) {
+                            $this.xliffGeneratorNoteDeveloperNoteUnitMap.Add($key, $unit);
+                        }
+                    }
+                    if ($findByXliffGeneratorNote) {
+                        $key = $xliffGeneratorNote;
+                        if (-not $this.xliffGeneratorNoteUnitMap.ContainsKey($key)) {
+                            $this.xliffGeneratorNoteUnitMap.Add($key, $unit);
+                        }
+                    }
+                }
+
+                if ($findBySourceAndDeveloperNote) {
+                    $key = @($sourceText, $developerNote);
+                    if (-not ($this.sourceDeveloperNoteUnitMap.ContainsKey($key))) {
+                        $this.sourceDeveloperNoteUnitMap.Add($key, $unit);
+                    }
+                }
+
+                if ($findBySource -and (-not ($this.sourceUnitMap.ContainsKey($sourceText)))) {
+                    $this.sourceUnitMap.Add($sourceText, $unit);
+                }
+            }
+        }
+    }
+
     [System.Xml.XmlNode] FindTranslationUnit([string] $transUnitId) {
-        return $this.TranslationUnitNodes() | Where-Object { $_.'id' -eq $transUnitId } | Select-Object -First 1;
+        if ($this.idUnitMap) {
+            if ($this.idUnitMap.ContainsKey($transUnitId)) {
+                return $this.idUnitMap[$transUnitId];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { $_.'id' -eq $transUnitId } | Select-Object -First 1;
+        }
     }
 
     [System.Xml.XmlNode] FindTranslationUnitByXliffGeneratorNoteAndSourceText([string] $xliffGenNote, [string] $sourceText) {
-        return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) -and ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        if ($this.xliffGeneratorNoteSourceUnitMap) {
+            $key = @($xliffGenNote, $sourceText);
+            if ($this.xliffGeneratorNoteSourceUnitMa.ContainsKey($key)) {
+                return $this.xliffGeneratorNoteSourceUnitMap[$key];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) -and ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        }
     }
 
     [System.Xml.XmlNode] FindTranslationUnitByXliffGeneratorNoteAndDeveloperNote([string] $xliffGenNote, [string] $devNote) {
-        return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) -and ($this.GetUnitDeveloperNote($_) -eq $devNote) } | Select-Object -First 1;
+        if ($this.xliffGeneratorNoteDeveloperNoteUnitMap) {
+            $key = @($xliffGenNote, $devNote);
+            if ($this.xliffGeneratorNoteDeveloperNoteUnitMap.ContainsKey($key)) {
+                return $this.xliffGeneratorNoteDeveloperNoteUnitMap[$key];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) -and ($this.GetUnitDeveloperNote($_) -eq $devNote) } | Select-Object -First 1;
+        }
     }
 
     [System.Xml.XmlNode] FindTranslationUnitByXliffGeneratorNote([string] $xliffGenNote) {
-        return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) } | Select-Object -First 1;
+        if ($this.xliffGeneratorNoteUnitMap) {
+            $key = $xliffGenNote;
+            if ($this.xliffGeneratorNoteUnitMap.ContainsKey($key)) {
+                return $this.xliffGeneratorNoteUnitMap[$key];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitXliffGeneratorNote($_) -eq $xliffGenNote) } | Select-Object -First 1;
+        }
     }
 
     [System.Xml.XmlNode] FindTranslationUnitBySourceTextAndDeveloperNote([string] $sourceText, [string] $devNote) {
-        return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitDeveloperNote($_) -eq $devNote) -and ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        if ($this.sourceDeveloperNoteUnitMap) {
+            $key = @($sourceText, $devNote);
+            if ($this.sourceDeveloperNoteUnitMap.ContainsKey($key)) {
+                return $this.sourceDeveloperNoteUnitMap[$key];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitDeveloperNote($_) -eq $devNote) -and ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        }
     }
 
     [System.Xml.XmlNode] FindTranslationUnitBySourceText([string] $sourceText) {
-        return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        if ($this.sourceUnitMap) {
+            $key = $sourceText;
+            if ($this.sourceUnitMap.ContainsKey($key)) {
+                return $this.sourceUnitMap[$key];
+            }
+            return $null;
+        }
+        else {
+            return $this.TranslationUnitNodes() | Where-Object { ($this.GetUnitSourceText($_) -eq $sourceText) } | Select-Object -First 1;
+        }
     }
 
     [void] ImportUnit([System.Xml.XmlNode] $unit) {
@@ -157,7 +276,8 @@ class XlfDocument {
             else {
                 foreach ($attr in $targetUnit.Attributes) {
                     if (-not $sourceUnitAsElement.Attributes[$attr.Name]) {
-                        $sourceUnitAsElement.SetAttributeNode($attr);
+                        $newAttr = $this.root.OwnerDocument.ImportNode($attr, $true);
+                        $sourceUnitAsElement.SetAttributeNode($newAttr);
                     }
                 }
             }
