@@ -17,8 +17,8 @@ You need to have Powershell 5.0 or newer. This module uses classes.
 
 ### Synchronize XLIFF Translations
 
-The `Sync-XliffTranslations` cmdlet will synchronize translation units and translations for a specified base/source file and target file.
-To use the cmdlet you will need to specify the path to the base/source file (`-sourcePath`) and a path to the target file (`-targetPath`) _or_ a target language (`-targetLanguage`).
+The `Sync-XliffTranslations` function will synchronize translation units and translations for a specified base/source file and target file.
+To use the function you will need to specify the path to the base/source file (`-sourcePath`) and a path to the target file (`-targetPath`) _or_ a target language (`-targetLanguage`).
 
 An example usage:
 
@@ -44,12 +44,12 @@ The extension will try to find corresponding trans-units and translations within
 
 If no trans-unit or translation is found, the unit is added and its target node is tagged with `state="needs-translation"`.
 
-Please check the documentation of the cmdlet for more information and the available parameters.
+Please check the documentation of the function for more information and the available parameters.
 
 ### Check XLIFF Translations
 
-The `Check-XliffTranslations` cmdlet will check for missing translations and/or for problems in translations in a specified XLIFF file.
-To use the cmdlet you will need to specify the target file (`-targetPath`) and whether you want to check for missing translations (`-checkForMissing`) and/or problems in translations (`-checkForProblems`).
+The `Check-XliffTranslations` function will check for missing translations and/or for problems in translations in a specified XLIFF file.
+To use the function you will need to specify the target file (`-targetPath`) and whether you want to check for missing translations (`-checkForMissing`) and/or problems in translations (`-checkForProblems`).
 If you let the command check for problems, then you can use the `translationRules` parameter to specify which technical validation rules should be applied.
 
 An example usage:
@@ -61,11 +61,11 @@ Check-XliffTranslations -targetPath "C:\MyProject\My Project.nl-NL.xlf" -checkFo
 When finished the command will report the number of missing translations and number of detected problems.
 Translation units without translations will be marked with `state="needs-translation"` and translation units with a problem in the translation will be marked with a 'needs-work' state and an "XLIFF Sync"-note that explains the detected problem.
 
-Please check the documentation of the cmdlet for more information and the available parameters.
+Please check the documentation of the function for more information and the available parameters.
 
 ### Get XLIFF Translation Files Diff
 
-The `Get-XliffTranslationsDiff` cmdlet will compare an original and new version of an XLIFF file and produce a new XLIFF Diff file that contains all the translation units that were added or whose source text was changed.
+The `Get-XliffTranslationsDiff` function will compare an original and new version of an XLIFF file and produce a new XLIFF Diff file that contains all the translation units that were added or whose source text was changed.
 
 An example usage:
 
@@ -73,4 +73,4 @@ An example usage:
 Get-XliffTranslationsDiff -originalPath "C:\MyProject\OriginalVersion.xlf" -newPath "C:\MyProject\NewVersion.xlf" -diffPath "C:\MyProject\Diff.xlf" -reportProgress
 ```
 
-Please check the documentation of the cmdlet for more information and the available parameters.
+Please check the documentation of the function for more information and the available parameters.
