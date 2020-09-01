@@ -14,7 +14,7 @@
  .Parameter xliffGeneratorNoteDesignation
   Specifies the name that is used to designate an XLIFF generator note.
  .Parameter preserveTargetAttributes
-  Specifies whether or not syncing should use the attributes from the target files for the trans-unit nodes while syncing.
+  Specifies whether or not syncing should use the attribute values from the target files for the trans-unit nodes while syncing.
  .Parameter preserveTargetAttributesOrder
   Specifies whether the attributes of trans-unit nodes should use the order found in the target files while syncing.
  .Parameter findByXliffGeneratorNoteAndSource
@@ -62,8 +62,8 @@ function Sync-XliffTranslations {
         [string] $developerNoteDesignation="Developer",
         [Parameter(Mandatory=$false)]
         [string] $xliffGeneratorNoteDesignation="Xliff Generator",
-        [switch] $preserveTargetAttributes, #TODO: Not tested yet
-        [switch] $preserveTargetAttributesOrder, #TODO: Not tested yet
+        [switch] $preserveTargetAttributes,
+        [switch] $preserveTargetAttributesOrder,
         [switch] $findByXliffGeneratorNoteAndSource,
         [switch] $findByXliffGeneratorAndDeveloperNote,
         [switch] $findByXliffGeneratorNote,
@@ -96,7 +96,7 @@ function Sync-XliffTranslations {
     }
 
     # TEMPORARY: Abort if a parameter for an unimplemented feature is used.
-    if ($parseFromDeveloperNote -or $copyFromSource -or $ignoreLineEndingTypeChanges) {
+    if ($parseFromDeveloperNote -or $copyFromSource) {
         throw "The parameters you entered are for one or more features that have not been implemented yet.";
     }
 
@@ -246,7 +246,7 @@ function Sync-XliffTranslations {
     }
 
     if ($detectSourceTextChanges) {
-        Write-Host "Detected $($detectedSourceTextChanges.Count) source text change(s).";
+        Write-Host -ForegroundColor Yellow "Detected $($detectedSourceTextChanges.Count) source text change(s).";
 
         if ($printProblems -and $detectedSourceTextChanges) {
             [string] $detectedMessage = "Detected source text change in unit '{0}'.";

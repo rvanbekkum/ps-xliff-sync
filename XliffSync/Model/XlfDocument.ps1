@@ -247,32 +247,52 @@ class XlfDocument {
         $parentNode.AppendChild($newUnit);
     }
 
-    [void] MergeUnit([System.Xml.XmlNode] $sourceUnit, [System.Xml.XmlNode] $targetUnit,[string] $translation) {
+    [void] MergeUnit([System.Xml.XmlNode] $sourceUnit, [System.Xml.XmlNode] $targetUnit, [string] $translation) {
         [System.Xml.XmlNode] $targetNode = $null;
 
         [System.Xml.XmlElement] $sourceUnitAsElement = $sourceUnit;
         if ($targetUnit) {
-            #TODO: Test preserveTargetAttributes + preserveTargetAttributesOrder
             if ($this.preserveTargetAttributes) {
+                # Use the target's attribute values
                 if ($this.preserveTargetAttributesOrder) {
-                    [System.Xml.XmlAttributeCollection]$sourceAttributes = $sourceUnitAsElement.Attributes;
-                    $sourceUnitAsElement.Attributes = $targetUnit.Attributes;
-                    $sourceUnitAsElement.'id' = $sourceAttributes['id'];
-                    foreach ($attr in $sourceAttributes) {
+                    $sourceAttributes = @{};
+                    foreach ($attr in $sourceUnit.Attributes) {
+                        $sourceAttributes[$attr.Name] = $attr.Value;
+                    }
+
+                    # First take the target's attributes
+                    $sourceUnitAsElement.Attributes.RemoveAll();
+                    foreach ($attr in $targetUnit.Attributes) {
+                        $newAttr = $this.root.OwnerDocument.ImportNode($attr, $true);
+                        $sourceUnitAsElement.SetAttributeNode($newAttr);
+                    }
+
+                    # Use the id from the sourceUnit
+                    if ($sourceAttributes.ContainsKey('id')) {
+                        $newAttr = $this.root.OwnerDocument.CreateAttribute('id');
+                        $newAttr.Value = $sourceAttributes['id'];
+                        Write-Host "SET ID to $($newAttr.Value)";
+                        $sourceUnitAsElement.SetAttributeNode($newAttr);
+                    }
+
+                    # Add the extra attributes from the sourceUnit
+                    foreach ($attr in $sourceAttributes.GetEnumerator()) {
                         if (-not $sourceUnitAsElement.Attributes[$attr.Name]) {
-                            $sourceUnitAsElement.SetAttributeNode($attr);
+                            $sourceUnitAsElement.SetAttribute($attr.Name, $attr.Value);
                         }
                     }
                 }
                 else {
                     foreach ($attr in $targetUnit.Attributes) {
                         if ($attr.Name -ne 'id') {
-                            $sourceUnitAsElement.SetAttributeNode($attr);
+                            $newAttr = $this.root.OwnerDocument.ImportNode($attr, $true);
+                            $sourceUnitAsElement.SetAttributeNode($newAttr);
                         }
                     }
                 }
             }
             else {
+                # Use the source's attribute values for the attributes in common, and extend these with any extra attributes from the target.
                 foreach ($attr in $targetUnit.Attributes) {
                     if (-not $sourceUnitAsElement.Attributes[$attr.Name]) {
                         $newAttr = $this.root.OwnerDocument.ImportNode($attr, $true);
