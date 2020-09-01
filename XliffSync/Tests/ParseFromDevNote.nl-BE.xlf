@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="nl-BE" original="ParseFromDevNote">
+    <body>
+      <group id="body">
+        <trans-unit id="PageExtension 1255613137 - Method 3998599243 - NamedType 1500874637" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>I am afraid I can not do that, Dave</source>
+          <note from="Developer" annotates="general" priority="2">en-US=I am trepidacious I can not do that, Dave|nl-NL=Ik ben bang dat ik dat niet kan doen, Dave</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension CustomerListExt - Method MyProcedure - NamedType DissapointDaveErr</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1255613137 - Method 3998599243 - NamedType 1441641737" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>One plus one = two</source>
+          <note from="Developer" annotates="general" priority="2">en-US=One plus one = TWO|nl-NL=Een plus een is twee|nl-BE=Een plus een is twee</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension CustomerListExt - Method MyProcedure - NamedType ExtremeMathMsg</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1255613137 - Method 3998599243 - NamedType 1663451319" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>I hope you are satisfied, Sam</source>
+          <note from="Developer" annotates="general" priority="2">This is just a regular comment</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension CustomerListExt - Method MyProcedure - NamedType SatisfySamMsg</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1255613137 - Method 3998599243 - NamedType 3882606824" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Hasta la vista, Tim</source>
+          <note from="Developer" annotates="general" priority="2">nl-BE=Salut, Tim</note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension CustomerListExt - Method MyProcedure - NamedType TerminateTimErr</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1255613137 - Method 3998599243 - NamedType 4184091849" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2901867346">
+          <source>Thank you Willem</source>
+          <note from="Developer" annotates="general" priority="2"/>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension CustomerListExt - Method MyProcedure - NamedType WorshipWillemMsg</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

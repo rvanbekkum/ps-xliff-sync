@@ -576,6 +576,33 @@ class XlfDocument {
         return $noteNode.InnerText;
     }
 
+    [string] GetUnitTranslationFromDeveloperNote([System.Xml.XmlNode] $unitNode) {
+        [string] $developerNoteText = $this.GetUnitDeveloperNote($unitNode);
+        if (-not $developerNoteText) {
+            return $null;
+        }
+
+        [string[]] $translationEntries = $developerNoteText.Split($this.parseFromDeveloperNoteSeparator);
+        Write-Host "$translationEntries"
+        [string] $translationText = $null;
+
+        for ($i = 0; $i -lt $translationEntries.Length; $i++) {
+            [string] $translationEntry = $translationEntries[$i];
+            [int] $trlSepIdx = $translationEntry.IndexOf('=');
+            if ($trlSepIdx -lt 0) {
+                continue;
+            }
+
+            [string] $language = $translationEntry.Substring(0, $trlSepIdx);
+            if ($language -eq $this.GetTargetLanguage()) {
+                $translationText = $translationEntry.Substring($trlSepIdx + 1);
+                break;
+            }
+        }
+
+        return $translationText;
+    }
+
     [System.Xml.XmlNode[]] TranslationUnitNodes() {
         if ($this.cachedTranslationUnitNodes) {
             return $this.cachedTranslationUnitNodes;

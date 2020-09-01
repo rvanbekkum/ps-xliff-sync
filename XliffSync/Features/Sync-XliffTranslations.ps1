@@ -69,11 +69,11 @@ function Sync-XliffTranslations {
         [switch] $findByXliffGeneratorNote,
         [switch] $findBySourceAndDeveloperNote,
         [switch] $findBySource,
-        [switch] $parseFromDeveloperNote, #TODO: Not implemented yet
-        [switch] $parseFromDeveloperNoteOverwrite, #TODO: Not implemented yet
-        [string] $parseFromDeveloperNoteSeparator="|", #TODO: Not implemented yet
-        [switch] $copyFromSource, #TODO: Not implemented yet
-        [switch] $copyFromSourceOverwrite, #TODO: Not implemented yet
+        [switch] $parseFromDeveloperNote,
+        [switch] $parseFromDeveloperNoteOverwrite,
+        [string] $parseFromDeveloperNoteSeparator="|",
+        [switch] $copyFromSource,
+        [switch] $copyFromSourceOverwrite,
         [Parameter(Mandatory=$false)]
         [boolean] $detectSourceTextChanges=$true,
         [Parameter(Mandatory=$false)]
@@ -93,11 +93,6 @@ function Sync-XliffTranslations {
     # Abort if both $targetPath and $targetLanguage are missing.
     if (-not $targetPath -and -not $targetLanguage) {
         throw "Missing -targetPath or -targetLanguage parameter.";
-    }
-
-    # TEMPORARY: Abort if a parameter for an unimplemented feature is used.
-    if ($parseFromDeveloperNote -or $copyFromSource) {
-        throw "The parameters you entered are for one or more features that have not been implemented yet.";
     }
 
     Write-Host "Loading source document $sourcePath";
@@ -227,8 +222,27 @@ function Sync-XliffTranslations {
                     }
                 }
             }
+        }
 
-            #TODO: Later -- copyFromSource + parseFromDeveloperNote
+        if ((-not $translation) -and ($copyFromSource -or $parseFromDeveloperNote)) {
+            [bool] $hasNoTranslation = $false;
+            if ($targetUnit) {
+                [string] $targetTranslation = $targetDocument.GetUnitTranslation($targetUnit);
+                $hasNoTranslation = (-not $targetTranslation) -or ($targetTranslation -eq $missingTranslation);
+            }
+            else {
+                $hasNoTranslation = $true;
+            }
+
+            [bool] $shouldParseFromDevNote = $parseFromDeveloperNote -and ($hasNoTranslation -or $parseFromDeveloperNoteOverwrite);
+            [bool] $shouldCopyFromSource = $copyFromSource -and ($hasNoTranslation -or $copyFromSourceOverwrite);
+
+            if ((-not $translation) -and $shouldParseFromDevNote) {
+                $translation = $mergedDocument.GetUnitTranslationFromDeveloperNote($unit);
+            }
+            if ((-not $translation) -and $shouldCopyFromSource) {
+                $translation = $mergedDocument.GetUnitSourceText($unit);
+            }
         }
 
         $mergedDocument.MergeUnit($unit, $targetUnit, $translation);
