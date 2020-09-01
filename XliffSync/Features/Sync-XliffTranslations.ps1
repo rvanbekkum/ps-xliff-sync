@@ -90,6 +90,9 @@ function Sync-XliffTranslations {
     if (-not $targetPath -and -not $targetLanguage) {
         throw "Missing -targetPath or -targetLanguage parameter.";
     }
+    if ($targetPath -and (-not (Test-Path $targetPath))) {
+        throw "File $targetPath could not be found."
+    }
 
     Write-Host "Loading source document $sourcePath";
     [XlfDocument] $mergedDocument = [XlfDocument]::LoadFromPath($sourcePath);
@@ -101,17 +104,22 @@ function Sync-XliffTranslations {
     $mergedDocument.preserveTargetAttributesOrder = $preserveTargetAttributesOrder;
 
     [XlfDocument] $targetDocument = $null;
-    if ($targetPath) {
-        Write-Host "Loading target document $targetPath";
-        $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
-    }
-    else {
-        $targetDocument = [XlfDocument]::CreateCopyFrom($mergedDocument, $targetLanguage);
+    if (-not $targetPath) {
         $targetPath = $sourcePath -replace '(\.g)?\.xlf', ".$targetLanguage.xlf"
     }
+
+    if (Test-Path $targetPath) {
+        Write-Host "Loading target document $targetPath";
+        $targetDocument = [XlfDocument]::LoadFromPath($targetPath);;
+    }
+    else {
+        Write-Host "Creating new document for language '$targetLanguage'";
+        $targetDocument = [XlfDocument]::CreateCopyFrom($mergedDocument, $targetLanguage);
+    }
+
     [string] $language = $targetDocument.GetTargetLanguage();
     if ($language) {
-        Write-Host "Setting target language for merge document to $language";
+        Write-Host "Setting target language for merge document to '$language'";
         $mergedDocument.SetTargetLanguage($language);
     }
 
