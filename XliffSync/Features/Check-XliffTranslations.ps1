@@ -128,7 +128,7 @@ function Check-XliffTranslations {
 
     [int] $missingCount = $missingTranslationUnits.Count;
     if ($checkForMissing) {
-        Write-Host "Detected: $missingCount missing translation(s).";
+        Write-Host -ForegroundColor Yellow "Detected: $missingCount missing translation(s).";
 
         if ($printProblems -and $missingTranslationUnits) {
             [string] $detectedMessage = "Missing translation in unit '{0}'.";
@@ -144,7 +144,7 @@ function Check-XliffTranslations {
 
     [int] $needWorkCount = $needWorkTranslationUnits.Count;
     if ($checkForProblems) {
-        Write-Host "Detected: $needWorkCount translation(s) that need work.";
+        Write-Host -ForegroundColor Yellow "Detected: $needWorkCount translation(s) that need work.";
 
         if ($printProblems -and $needWorkTranslationUnits) {
             [string] $detectedMessage = "Translation issue in unit '{0}'.";
