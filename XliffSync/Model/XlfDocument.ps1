@@ -583,7 +583,6 @@ class XlfDocument {
         }
 
         [string[]] $translationEntries = $developerNoteText.Split($this.parseFromDeveloperNoteSeparator);
-        Write-Host "$translationEntries"
         [string] $translationText = $null;
 
         for ($i = 0; $i -lt $translationEntries.Length; $i++) {
