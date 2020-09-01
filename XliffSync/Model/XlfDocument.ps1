@@ -425,7 +425,7 @@ class XlfDocument {
         [System.Xml.XmlNode] $targetChildNode = $unit.ChildNodes | Where-Object { $_.Name -eq "target" } | Select-Object -First 1;
 
         if ($existingNote) {
-            $notesParent.ReplaceChild($existingNote, $noteNode);
+            $notesParent.ReplaceChild($noteNode, $existingNote);
         }
         elseif ($targetChildNode -and ($this.Version() -eq "1.2")) {
             $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
