@@ -271,7 +271,6 @@ class XlfDocument {
                     if ($sourceAttributes.ContainsKey('id')) {
                         $newAttr = $this.root.OwnerDocument.CreateAttribute('id');
                         $newAttr.Value = $sourceAttributes['id'];
-                        Write-Host "SET ID to $($newAttr.Value)";
                         $sourceUnitAsElement.SetAttributeNode($newAttr);
                     }
 
@@ -720,7 +719,8 @@ class XlfDocument {
     }
 
     static [XlfDocument] LoadFromPath([string] $filePath) {
-        [xml] $fileContentXml = Get-Content $filePath;
+        [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
+        $fileContentXml.Load($filePath);
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
     }
 }
