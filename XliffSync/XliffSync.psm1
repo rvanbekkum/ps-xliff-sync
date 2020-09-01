@@ -14,7 +14,7 @@ foreach($model in $modelList)
 foreach($folder in @('Features'))
 {
     $rootPath = Join-Path -Path $PSScriptRoot -ChildPath $folder
-    if(Test-Path -Path $root)
+    if(Test-Path -Path $rootPath)
     {
         $files = Get-ChildItem -Path $rootPath -Filter *.ps1 -Recurse
 
