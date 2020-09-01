@@ -117,7 +117,12 @@ function Check-XliffTranslations {
                 $needWorkTranslationUnits += $unit;
             }
 
-            #TODO: Check for Resolved Problem
+            # Check for resolved problem (to delete XLIFF Sync note)
+            if ($targetDocument.GetState($unit) -ne [XlfTranslationState]::NeedsWorkTranslation) {
+                if ($targetDocument.TryDeleteXLIFFSyncNote($unit)) {
+                    $problemResolvedInFile = $true;
+                }
+            }
         }
     }
 

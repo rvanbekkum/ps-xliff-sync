@@ -358,7 +358,7 @@ class XlfDocument {
         if ($stateNode -and $stateNode.HasAttributes) {
             switch ($this.Version()) {
                 "1.2" {
-                    [string] $stateValue = $stateNode.Attributes['state'];
+                    [string] $stateValue = $stateNode.GetAttribute('state');
                     if ($stateValue) {
                         switch ($stateValue) {
                             'needs-translation' {
@@ -376,7 +376,7 @@ class XlfDocument {
                 }
             }
         }
-        return $null;
+        return [XlfTranslationState]::MissingTranslation;
     }
 
     [void] SetState([System.Xml.XmlNode] $unit, [XlfTranslationState] $newTranslationState) {
@@ -440,6 +440,24 @@ class XlfDocument {
         }
     }
 
+    [bool] TryDeleteXLIFFSyncNote([System.Xml.XmlNode] $unit) {
+        [System.Xml.XmlNode] $notesParent = $unit;
+        if (-not $notesParent) {
+            return $false;
+        }
+
+        [System.Xml.XmlNode] $existingNote = $this.GetExistingXliffSyncNote($notesParent);
+        if (-not $existingNote) {
+            return $false;
+        }
+
+        [System.Xml.XmlNode] $whiteSpaceNode = $existingNote.PreviousSibling;
+        $notesParent.RemoveChild($existingNote);
+        $notesParent.RemoveChild($whiteSpaceNode);
+
+        return $true;
+    }
+
     hidden [System.Xml.XmlNode] GetExistingXliffSyncNote([System.Xml.XmlNode] $notesParent) {
         if (-not $notesParent) {
             return $null;
@@ -453,7 +471,7 @@ class XlfDocument {
             }
         }
         [string] $categoryAttributeValue = "XLIFF Sync";
-        return $notesParent.ChildNodes | Where-Object { ($_.name -eq 'note') -and ($_.Attributes) -and ($_.Attributes[$categoryAttributeName] -eq $categoryAttributeValue)} | Select-Object -First 1;
+        return $notesParent.ChildNodes | Where-Object { ($_.name -eq 'note') -and ($_.Attributes) -and ($_.GetAttribute($categoryAttributeName) -eq $categoryAttributeValue)} | Select-Object -First 1;
     }
 
     [System.Xml.XmlNode] CreateTargetNode([System.Xml.XmlNode] $parentUnit, [string] $translation, [XlfTranslationState] $newTranslationState) {
