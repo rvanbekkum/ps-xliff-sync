@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="DetectProblems">
+    <body>
+      <group id="body">
+        <trans-unit id="Placeholders-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders missing in translation %0 %1.</source>
+          <target>Placeholders %0</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="Placeholders-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders missing in source %0.</source>
+          <target>Placeholders %0 %1</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="Placeholders-3" size-unit="char" translate="no" xml:space="preserve">
+          <source>Placeholders %0 but no translation necessary.</source>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="Placeholders-4" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders %0 %1 everything fine.</source>
+          <target>Placeholders %0 %1</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="PlaceholdersDevNote-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders explanation missing %0.</source>
+          <target>Placeholders %0.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="PlaceholdersDevNote-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders explanation missing %0 %1.</source>
+          <target>Placeholders %0 %1.</target>
+          <note from="Developer" annotates="general" priority="2">%0 = A Placeholder</note>
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="PlaceholdersDevNote-3" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Placeholders explanation fine %0 %1.</source>
+          <target>Placeholders %0 %1.</target>
+          <note from="Developer" annotates="general" priority="2">%0 = A Placeholder; %1 = Another Placeholder</note>
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="OptionMemberCount-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA,OptionB</source>
+          <target>OptionA</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionMemberCount-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA,OptionB,OptionC</source>
+          <target>OptionA,OptionB</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionMemberCount-3" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA,OptionB,OptionC</source>
+          <target>OptionA,OptionB,OptionC</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionMemberCount-4" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA</source>
+          <target>OptionA</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionLeadingSpaces-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA, OptionB</source>
+          <target>OptionA,OptionB</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionLeadingSpaces-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source> OptionA,OptionB</source>
+          <target>OptionA,OptionB</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionLeadingSpaces-3" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA,OptionB</source>
+          <target>OptionA, OptionB</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="OptionLeadingSpaces-4" size-unit="char" translate="yes" xml:space="preserve">
+          <source>OptionA,OptionB, OptionC,OptionD</source>
+          <target>OptionA,OptionB, OptionC, OptionD</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesExist-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive  spaces  do exist in the source text.</source>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesExist-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces do NOT exist in the source text.</source>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesExist-3" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces do exist in the translation text.</source>
+          <target>There are consecutive   spaces.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesExist-4" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces do NOT exist in the translation text.</source>
+          <target>There are NO consecutive spaces.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesConsistent-1" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces are  NOT consistent.</source>
+          <target>Consecutive spaces are   NOT consistent.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesConsistent-2" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces are   NOT   consistent.</source>
+          <target>Consecutive spaces are   NOT    consistent.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesConsistent-3" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces are   NOT     consistent.</source>
+          <target>Consecutive spaces are   NOT    consistent.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesConsistent-4" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces    ARE    consistent.</source>
+          <target>Consecutive spaces    ARE    consistent.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+        <trans-unit id="ConsecutiveSpacesConsistent-5" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Consecutive spaces    ARE    consistent.</source>
+          <target>Consecutive spaces    ARE    consistent and the text is different.</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3"></note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

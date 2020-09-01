@@ -430,7 +430,10 @@ class XlfDocument {
         }
         elseif ($targetChildNode -and ($this.Version() -eq "1.2")) {
             $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
-            $unit.InsertAfter($targetChildNode.PreviousSibling, $noteNode);
+            
+            # Add the same whitespace after the note.
+            $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($targetChildNode.PreviousSibling, $true);
+            $unit.InsertAfter($newWhiteSpaceNode, $noteNode);
         }
         else {
             $notesParent.AppendChild($noteNode);
@@ -484,7 +487,10 @@ class XlfDocument {
                 }
                 elseif ($sourceChildNode) {
                     $unit.InsertAfter($targetNode, $sourceChildNode.NextSibling);
-                    $unit.InsertAfter($sourceChildNode.PreviousSibling, $targetNode);
+
+                    # Add the same whitespace after the target node.
+                    $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($sourceChildNode.PreviousSibling, $true);
+                    $unit.InsertAfter($newWhiteSpaceNode, $targetNode);
                 }
                 else {
                     $unit.AppendChild($targetNode);
@@ -545,11 +551,11 @@ class XlfDocument {
             }
         }
 
-        if ((-not $noteNode) -or (-not $noteNode.HasChildNodes)) {
+        if ((-not $noteNode) -or (-not $noteNode.InnerText)) {
             return $null;
         }
 
-        return $noteNode.ChildNodes[0].Value;
+        return $noteNode.InnerText;
     }
 
     [System.Xml.XmlNode[]] TranslationUnitNodes() {
