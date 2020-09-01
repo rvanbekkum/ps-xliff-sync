@@ -39,8 +39,6 @@
   Specifies whether changes in the source text of a trans-unit should be detected. If a change is detected, the target state is changed to needs-adaptation and a note is added to indicate the translation should be reviewed.
   .Parameter missingTranslation
   Specifies the target tag content for units where the translation is missing.
-  .Parameter needsWorkTranslationSubstate
-  Specifies the substate to use for translations that need work in xlf2 files.
   .Parameter unitMaps
   Specifies for which search purposes this command should create in-memory maps in preparation of syncing.
   .Parameter AzureDevOps
@@ -79,8 +77,6 @@ function Sync-XliffTranslations {
         [Parameter(Mandatory=$false)]
         [string] $missingTranslation="",
         [Parameter(Mandatory=$false)]
-        [string] $needsWorkTranslationSubstate="xliffSync:needsWork", #TODO: Not implemented yet (XLIFF 2.0)
-        [Parameter(Mandatory=$false)]
         [ValidateSet("None", "Id", "All")]
         [string] $unitMaps = "All",
         [Parameter(Mandatory=$false)]
@@ -100,7 +96,6 @@ function Sync-XliffTranslations {
     $mergedDocument.developerNoteDesignation = $developerNoteDesignation;
     $mergedDocument.xliffGeneratorNoteDesignation = $xliffGeneratorNoteDesignation;
     $mergedDocument.missingTranslation = $missingTranslation;
-    $mergedDocument.needsWorkTranslationSubstate = $needsWorkTranslationSubstate;
     $mergedDocument.parseFromDeveloperNoteSeparator = $parseFromDeveloperNoteSeparator;
     $mergedDocument.preserveTargetAttributes = $preserveTargetAttributes;
     $mergedDocument.preserveTargetAttributesOrder = $preserveTargetAttributesOrder;

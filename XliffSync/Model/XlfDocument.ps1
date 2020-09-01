@@ -18,7 +18,6 @@ class XlfDocument {
     [boolean] $preserveTargetAttributesOrder;
     [string] $parseFromDeveloperNoteSeparator;
     [string] $missingTranslation;
-    [string] $needsWorkTranslationSubstate;
 
     [boolean] Valid() {
         $hasRoot = $null -ne $this.root;
@@ -756,6 +755,11 @@ class XlfDocument {
     hidden static [XlfDocument] LoadFromRootNode([System.Xml.XmlNode] $rootNode) {
         [XlfDocument] $doc = [XlfDocument]::new();
         $doc.root = $rootNode;
+        
+        if ($doc.Version() -ne "1.2") {
+            throw "Currently this module only supports XLIFF 1.2 Files. Support for XLIFF 2.0 will be added later.";
+        }
+
         return $doc;
     }
 
