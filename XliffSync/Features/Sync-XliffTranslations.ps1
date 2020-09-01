@@ -142,6 +142,9 @@ function Sync-XliffTranslations {
     [int] $unitCount = $mergedDocument.TranslationUnitNodes().Count;
     [int] $i = 0;
     [int] $onePercentCount = $unitCount / 100;
+    if ($onePercentCount -eq 0) {
+        $onePercentCount = 1;
+    }
     [System.Xml.XmlNode[]] $detectedSourceTextChanges = @();
 
     Write-Host "Processing unit nodes... (Please be patient)";
