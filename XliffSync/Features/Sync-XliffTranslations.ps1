@@ -37,8 +37,6 @@
   Specifies whether translations copied from the source text should overwrite existing translations.
   .Parameter detectSourceTextChanges
   Specifies whether changes in the source text of a trans-unit should be detected. If a change is detected, the target state is changed to needs-adaptation and a note is added to indicate the translation should be reviewed.
-  .Parameter ignoreLineEndingTypeChanges
-  Specifies whether changes in line ending type (CRLF vs. LF) should not be considered as changes to the source text of a trans-unit.
   .Parameter missingTranslation
   Specifies the target tag content for units where the translation is missing.
   .Parameter needsWorkTranslationSubstate
@@ -64,34 +62,20 @@ function Sync-XliffTranslations {
         [string] $developerNoteDesignation="Developer",
         [Parameter(Mandatory=$false)]
         [string] $xliffGeneratorNoteDesignation="Xliff Generator",
-        [Parameter(Mandatory=$false)]
         [switch] $preserveTargetAttributes, #TODO: Not tested yet
-        [Parameter(Mandatory=$false)]
         [switch] $preserveTargetAttributesOrder, #TODO: Not tested yet
-        [Parameter(Mandatory=$false)]
         [switch] $findByXliffGeneratorNoteAndSource,
-        [Parameter(Mandatory=$false)]
         [switch] $findByXliffGeneratorAndDeveloperNote,
-        [Parameter(Mandatory=$false)]
         [switch] $findByXliffGeneratorNote,
-        [Parameter(Mandatory=$false)]
         [switch] $findBySourceAndDeveloperNote,
-        [Parameter(Mandatory=$false)]
         [switch] $findBySource,
-        [Parameter(Mandatory=$false)]
         [switch] $parseFromDeveloperNote, #TODO: Not implemented yet
-        [Parameter(Mandatory=$false)]
         [switch] $parseFromDeveloperNoteOverwrite, #TODO: Not implemented yet
-        [Parameter(Mandatory=$false)]
         [string] $parseFromDeveloperNoteSeparator="|", #TODO: Not implemented yet
-        [Parameter(Mandatory=$false)]
         [switch] $copyFromSource, #TODO: Not implemented yet
-        [Parameter(Mandatory=$false)]
         [switch] $copyFromSourceOverwrite, #TODO: Not implemented yet
         [Parameter(Mandatory=$false)]
         [boolean] $detectSourceTextChanges=$true,
-        [Parameter(Mandatory=$false)]
-        [switch] $ignoreLineEndingTypeChanges, #TODO: Not implemented yet
         [Parameter(Mandatory=$false)]
         [string] $missingTranslation="",
         [Parameter(Mandatory=$false)]
@@ -252,8 +236,6 @@ function Sync-XliffTranslations {
             [string] $origSourceText = $targetDocument.GetUnitSourceText($targetUnit);
 
             if ($mergedSourceText -and $origSourceText -and $mergedTranslText) {
-                #TODO: $ignoreLineEndingTypeChanges
-
                 if ($mergedSourceText -ne $origSourceText) {
                     $mergedDocument.SetXliffSyncNote($unit, 'Source text has changed. Please review the translation.');
                     $mergedDocument.SetState($unit, [XlfTranslationState]::NeedsWorkTranslation);
