@@ -1,30 +1,28 @@
 [cmdletbinding()]
 param()
 
-Write-Verbose $PSScriptRoot
-$classList = @(
+# Load Model (e.g., classes)
+$modelList = @(
     'XlfDocument'
 )
-
-foreach($class in $classList)
+foreach($model in $modelList)
 {
-    Write-Verbose " Class: $class"
-    . "$psscriptroot\Classes\$class.ps1"
+    . "$PSScriptRoot\Model\$model.ps1"
 }
 
-Write-Verbose 'Import everything in sub folders folder'
-foreach($folder in @('Features'))
+# Load Functions
+foreach($folder in @('Public'))
 {
-    $root = Join-Path -Path $PSScriptRoot -ChildPath $folder
-    if(Test-Path -Path $root)
+    $rootPath = Join-Path -Path $PSScriptRoot -ChildPath $folder
+    if(Test-Path -Path $rootPath)
     {
-        Write-Verbose "processing folder $root"
-        $files = Get-ChildItem -Path $root -Filter *.ps1 -Recurse
+        $files = Get-ChildItem -Path $rootPath -Filter *.ps1 -Recurse
 
         # dot source each file
-        $files | where-Object{ $_.name -NotLike '*.Tests.ps1'} | 
-            ForEach-Object{Write-Verbose $_.basename; . $_.FullName}
+        $files | Where-Object{ $_.name -NotLike '*.Tests.ps1'} | 
+            ForEach-Object{Write-Verbose $_.BaseName; . $_.FullName}
     }
 }
 
-Export-ModuleMember -function (Get-ChildItem -Path "$PSScriptRoot\Features\*.ps1").basename
+# Export Public Functions
+Export-ModuleMember -Function (Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1").BaseName
