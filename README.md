@@ -1,5 +1,8 @@
 # XLIFF Sync
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![XliffSync](https://img.shields.io/powershellgallery/v/XliffSync.svg?style=flat-square&label=XliffSync)](https://www.powershellgallery.com/packages/XliffSync/)
+
 A module to keep XLIFF translation files in sync with a specified, automatically generated base-XLIFF file.
 
 This PowerShell module is based off the [XLIFF Sync](https://github.com/rvanbekkum/vsc-xliff-sync) VSCode extension.

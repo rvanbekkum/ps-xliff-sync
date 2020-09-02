@@ -11,7 +11,7 @@ foreach($model in $modelList)
 }
 
 # Load Functions
-foreach($folder in @('Features'))
+foreach($folder in @('Public'))
 {
     $rootPath = Join-Path -Path $PSScriptRoot -ChildPath $folder
     if(Test-Path -Path $rootPath)
@@ -25,4 +25,4 @@ foreach($folder in @('Features'))
 }
 
 # Export Public Functions
-Export-ModuleMember -Function (Get-ChildItem -Path "$PSScriptRoot\Features\*.ps1").BaseName
+Export-ModuleMember -Function (Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1").BaseName
