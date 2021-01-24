@@ -158,7 +158,7 @@ class XlfDocument {
     [System.Xml.XmlNode] FindTranslationUnitByXliffGeneratorNoteAndSourceText([string] $xliffGenNote, [string] $sourceText) {
         if ($this.xliffGeneratorNoteSourceUnitMap) {
             $key = @($xliffGenNote, $sourceText);
-            if ($this.xliffGeneratorNoteSourceUnitMa.ContainsKey($key)) {
+            if ($this.xliffGeneratorNoteSourceUnitMap.ContainsKey($key)) {
                 return $this.xliffGeneratorNoteSourceUnitMap[$key];
             }
             return $null;
