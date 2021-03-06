@@ -132,12 +132,18 @@ class XlfDocument {
                 if ($findBySourceAndDeveloperNote) {
                     $key = @($sourceText, $developerNote);
                     if (-not ($this.sourceDeveloperNoteUnitMap.ContainsKey($key))) {
-                        $this.sourceDeveloperNoteUnitMap.Add($key, $unit);
+                        $translation = $this.GetUnitTranslation($unit);
+                        if ($translation) {
+                            $this.sourceDeveloperNoteUnitMap.Add($key, $unit);
+                        }
                     }
                 }
 
                 if ($findBySource -and (-not ($this.sourceUnitMap.ContainsKey($sourceText)))) {
-                    $this.sourceUnitMap.Add($sourceText, $unit);
+                    $translation = $this.GetUnitTranslation($unit);
+                    if ($translation) {
+                        $this.sourceUnitMap.Add($sourceText, $unit);
+                    }
                 }
             }
         }
@@ -158,7 +164,7 @@ class XlfDocument {
     [System.Xml.XmlNode] FindTranslationUnitByXliffGeneratorNoteAndSourceText([string] $xliffGenNote, [string] $sourceText) {
         if ($this.xliffGeneratorNoteSourceUnitMap) {
             $key = @($xliffGenNote, $sourceText);
-            if ($this.xliffGeneratorNoteSourceUnitMa.ContainsKey($key)) {
+            if ($this.xliffGeneratorNoteSourceUnitMap.ContainsKey($key)) {
                 return $this.xliffGeneratorNoteSourceUnitMap[$key];
             }
             return $null;
@@ -503,11 +509,16 @@ class XlfDocument {
                     $unit.ReplaceChild($targetNode, $targetChildNode);
                 }
                 elseif ($sourceChildNode) {
-                    $unit.InsertAfter($targetNode, $sourceChildNode.NextSibling);
+                    if ($unit.Attributes["xml:space"] -and ($unit.Attributes["xml:space"].Value -eq "preserve")) {
+                        $unit.InsertAfter($targetNode, $sourceChildNode.NextSibling);
 
-                    # Add the same whitespace after the target node.
-                    $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($sourceChildNode.PreviousSibling, $true);
-                    $unit.InsertAfter($newWhiteSpaceNode, $targetNode);
+                        # Add the same whitespace after the target node.
+                        $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($sourceChildNode.PreviousSibling, $true);
+                        $unit.InsertAfter($newWhiteSpaceNode, $targetNode);
+                    }
+                    else {
+                        $unit.InsertAfter($targetNode, $sourceChildNode);
+                    }
                 }
                 else {
                     $unit.AppendChild($targetNode);
