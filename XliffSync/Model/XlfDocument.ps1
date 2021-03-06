@@ -132,12 +132,18 @@ class XlfDocument {
                 if ($findBySourceAndDeveloperNote) {
                     $key = @($sourceText, $developerNote);
                     if (-not ($this.sourceDeveloperNoteUnitMap.ContainsKey($key))) {
-                        $this.sourceDeveloperNoteUnitMap.Add($key, $unit);
+                        $translation = $this.GetUnitTranslation($unit);
+                        if ($translation) {
+                            $this.sourceDeveloperNoteUnitMap.Add($key, $unit);
+                        }
                     }
                 }
 
                 if ($findBySource -and (-not ($this.sourceUnitMap.ContainsKey($sourceText)))) {
-                    $this.sourceUnitMap.Add($sourceText, $unit);
+                    $translation = $this.GetUnitTranslation($unit);
+                    if ($translation) {
+                        $this.sourceUnitMap.Add($sourceText, $unit);
+                    }
                 }
             }
         }
