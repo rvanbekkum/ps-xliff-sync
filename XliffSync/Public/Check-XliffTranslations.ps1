@@ -163,6 +163,8 @@ function Check-XliffTranslations {
         Write-Host "Saving document to $targetPath";
         $targetDocument.SaveToFilePath($targetPath);
     }
+
+    return $missingTranslationUnits + $needWorkTranslationUnits;
 }
 
 function HasMissingTranslation {
