@@ -509,11 +509,16 @@ class XlfDocument {
                     $unit.ReplaceChild($targetNode, $targetChildNode);
                 }
                 elseif ($sourceChildNode) {
-                    $unit.InsertAfter($targetNode, $sourceChildNode.NextSibling);
+                    if ($unit.Attributes["xml:space"] -and ($unit.Attributes["xml:space"].Value -eq "preserve")) {
+                        $unit.InsertAfter($targetNode, $sourceChildNode.NextSibling);
 
-                    # Add the same whitespace after the target node.
-                    $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($sourceChildNode.PreviousSibling, $true);
-                    $unit.InsertAfter($newWhiteSpaceNode, $targetNode);
+                        # Add the same whitespace after the target node.
+                        $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($sourceChildNode.PreviousSibling, $true);
+                        $unit.InsertAfter($newWhiteSpaceNode, $targetNode);
+                    }
+                    else {
+                        $unit.InsertAfter($targetNode, $sourceChildNode);
+                    }
                 }
                 else {
                     $unit.AppendChild($targetNode);
