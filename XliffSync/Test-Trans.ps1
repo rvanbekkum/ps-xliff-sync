@@ -5,4 +5,5 @@ Import-Module -Name "C:\Users\zabcikt.CDL\GitHub\ps-xliff-sync\XliffSync\XliffSy
 Trans-XliffTranslations `
     -source "C:\Users\zabcikt.CDL\GitHub\ps-xliff-sync\XliffSync\Tests\TestTransSource.cs-CZ.xlf" `
     -target "C:\Users\zabcikt.CDL\GitHub\ps-xliff-sync\XliffSync\Tests\TestTransTarget.cs-CZ.xlf"
-    # -unitMaps 'None'
+# -source "C:\tmp\" `
+# -unitMaps 'None'

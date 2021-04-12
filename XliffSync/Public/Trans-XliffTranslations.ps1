@@ -4,7 +4,7 @@
  .Description
   Iterates through the translation units of a base XLIFF file and synchronizes them with a target XLIFF file.
  .Parameter sourcePath
-  Specifies the path to the base/source XLIFF file.
+  Specifies the path to the base/source XLIFF file / folder.
  .Parameter targetPath
   Specifies the path to the target XLIFF file.
  .Parameter unitMaps
@@ -20,17 +20,23 @@ function Trans-XliffTranslations {
         [Parameter(Mandatory = $false)]
         [ValidateSet("None", "Id", "All")]
         [string] $unitMaps = "All"
-    )
-
-    Write-Host "Loading source document $sourcePath";
-    [XlfDocument] $sourceDocument = [XlfDocument]::new();    
-    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\PPF-General\\Translations\\PPF-General.cs-CZ.xlf");
-    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\DocSAFE\\Translations\\DocSAFE.cs-CZ.xlf");     
-    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\ZAL\\Translations\\CDLZAL.cs-CZ.xlf");          
-    # $sourceDocument.SaveToFilePath("c:\\tmp\\test.xlf");
+    )    
     
     Write-Host "Loading target document $targetPath";
     [XlfDocument] $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
+
+    $targetLanguage = $targetDocument.GetTargetLanguage();
+
+    Write-Host "Loading source document $sourcePath";
+    [XlfDocument] $sourceDocument = [XlfDocument]::new();    
+    $filter = "*.$targetLanguage.xlf";
+    Get-ChildItem -Path $sourcePath -Filter $filter -Recurse | foreach-object -process { 
+        if ($_) {
+            $targetPath2 = $_.FullName;
+            Write-Host "Loading target document $targetPath2";
+            $sourceDocument.AddFromPath($targetPath2);
+        }
+    }
     
     if ($unitMaps -ne "None") {
         Write-Host "Creating Maps in memory for source document's units.";
