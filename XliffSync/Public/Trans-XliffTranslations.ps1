@@ -23,21 +23,33 @@ function Trans-XliffTranslations {
     )
 
     Write-Host "Loading source document $sourcePath";
-    [XlfDocument] $sourceDocument = [XlfDocument]::LoadFromPath($sourcePath);    
-
+    [XlfDocument] $sourceDocument = [XlfDocument]::new();    
+    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\PPF-General\\Translations\\PPF-General.cs-CZ.xlf");
+    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\DocSAFE\\Translations\\DocSAFE.cs-CZ.xlf");     
+    $sourceDocument.AddFromPath("c:\\Users\\zabcikt.CDL\\Repos\\SOL-BC-PPF\\PPFBCApps\\ZAL\\Translations\\CDLZAL.cs-CZ.xlf");          
+    # $sourceDocument.SaveToFilePath("c:\\tmp\\test.xlf");
+    
     Write-Host "Loading target document $targetPath";
     [XlfDocument] $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
-
-    $sourceTranslationsHashTable = @{};    
+    
     if ($unitMaps -ne "None") {
-        Write-Host "Creating Maps in memory for target document's units.";
+        Write-Host "Creating Maps in memory for source document's units.";
         if ($unitMaps -eq "Id") {
-            $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $false);
-            $targetDocument.CreateUnitMaps($false, $false, $false, $false, $false);
+            $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $false);            
         }
         else {            
             [bool] $findBySource = $true;
-            $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $findBySource);
+            $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $findBySource);            
+        }
+    }
+
+    if ($unitMaps -ne "None") {
+        Write-Host "Creating Maps in memory for target document's units.";
+        if ($unitMaps -eq "Id") {            
+            $targetDocument.CreateUnitMaps($false, $false, $false, $false, $false);
+        }
+        else {            
+            [bool] $findBySource = $true;            
             $targetDocument.CreateUnitMaps($false, $false, $false, $false, $findBySource);
         }
     }
@@ -56,6 +68,7 @@ function Trans-XliffTranslations {
         Write-Progress -Activity $progressMessage -PercentComplete 0;       
     }
 
+    $sourceTranslationsHashTable = @{};    
     $sourceDocument.TranslationUnitNodes() | ForEach-Object {
         [System.Xml.XmlNode] $sourceUnit = $_;
 

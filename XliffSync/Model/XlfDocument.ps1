@@ -476,7 +476,7 @@ class XlfDocument {
             }
         }
         [string] $categoryAttributeValue = "XLIFF Sync";
-        return $notesParent.ChildNodes | Where-Object { ($_.name -eq 'note') -and ($_.Attributes) -and ($_.GetAttribute($categoryAttributeName) -eq $categoryAttributeValue)} | Select-Object -First 1;
+        return $notesParent.ChildNodes | Where-Object { ($_.name -eq 'note') -and ($_.Attributes) -and ($_.GetAttribute($categoryAttributeName) -eq $categoryAttributeValue) } | Select-Object -First 1;
     }
 
     [System.Xml.XmlNode] CreateTargetNode([System.Xml.XmlNode] $parentUnit, [string] $translation, [XlfTranslationState] $newTranslationState) {
@@ -530,7 +530,7 @@ class XlfDocument {
 
     [void] DeleteTargetNode([System.Xml.XmlElement] $unitNode) {
         if ($unitNode) {
-            [System.Xml.XmlNode] $targetNode = $unitNode.ChildNodes | Where-Object { $_.Name -eq 'target'} | Select-Object -First 1;
+            [System.Xml.XmlNode] $targetNode = $unitNode.ChildNodes | Where-Object { $_.Name -eq 'target' } | Select-Object -First 1;
             if ($targetNode) {
                 $unitNode.RemoveChild($targetNode);
             }
@@ -787,6 +787,22 @@ class XlfDocument {
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
         $fileContentXml.Load($filePath);
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
+    }
+
+    [void] AddFromPath([string] $filePath) {
+        [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
+        $fileContentXml.Load($filePath);
+        $xlfDoc = [XlfDocument]::LoadFromXmlDocument($fileContentXml);        
+                
+        if ($null -ne $this.root) {
+            [xml] $xmlDoc = $this.root.OwnerDocument;
+            $group = [XlfDocument]::GetNode('group', $xlfDoc.root);          
+            $imported = $xmlDoc.ImportNode($group, $true);
+            $groupImported = [XlfDocument]::GetNode('group', $this.root);
+            $groupImported.AppendChild($imported);
+        } else {
+            $this.root = $xlfDoc.root;
+        }        
     }
 }
 
