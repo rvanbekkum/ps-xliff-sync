@@ -117,9 +117,7 @@ function Trans-XliffTranslations {
                     
             # Find by ID.
             [System.Xml.XmlNode] $sourceUnit = $sourceDocument.FindTranslationUnit($targetUnit.id);                
-
-            if ($sourceUnit) {
-                [System.Xml.XmlNode] $targetDocTranslUnit = $sourceDocument.FindTranslationUnitBySourceText($targetSourceText);
+            if ($sourceUnit) {                
                 $translation = $sourceDocument.GetUnitTranslation($sourceUnit);
             }
 
