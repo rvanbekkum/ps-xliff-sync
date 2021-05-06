@@ -1,8 +1,8 @@
 <# 
  .Synopsis
-  Synchronizes translation units and translations with a base XLIFF file to a target XLIFF file.
+  Translates translation units in target(s) with a translation base from source file(s).
  .Description
-  Iterates through the translation units of a base XLIFF file and synchronizes them with a target XLIFF file.
+  Iterates through the translation units of target file(s) and translates them with a translation base from source file(s).
  .Parameter sourcePath
   Specifies the path to the base/source XLIFF file / folder.
  .Parameter targetPath
