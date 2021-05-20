@@ -1,6 +1,6 @@
 @{
     RootModule        = 'XliffSync.psm1'
-    ModuleVersion     = '1.1.0.0'
+    ModuleVersion     = '1.2.0.0'
     GUID              = 'a7614fd7-ce84-44db-9475-bc1f5fa4f0e5'
     Author            = 'Rob van Bekkum'
     CompanyName       = 'WSB Solutions B.V.'
