@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="nl-BE" original="ParseFromDevNote">
+    <body>
+      <group>    
+        <trans-unit id="Table 38627395 - Field 883711285 - Property 2879900210" size-unit="" translate="yes">
+          <source>Entry No.</source>
+          <target>Číslo položky</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Table CDL Advance Link - Field Entry No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 38627395 - Field 149522872 - Property 2879900210" size-unit="" translate="yes">
+          <source>Entry Type</source>
+          <target>Typ položky</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Table CDL Advance Link - Field Entry Type - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 38627395 - Field 592951229 - Property 2879900210" size-unit="" translate="yes">
+          <source>Amount (LCY)</source>
+          <target>Částka (LM)</target>
+          <note from="Developer" annotates="general" priority="2" />
+          <note from="Xliff Generator" annotates="general" priority="3">Table CDL Advance Link - Field Amount (LCY) - Property Caption</note>
+        </trans-unit>        
+      </group>
+    </body>
+  </file>
+</xliff>
