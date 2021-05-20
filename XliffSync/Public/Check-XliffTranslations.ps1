@@ -239,6 +239,10 @@ function HasProblem {
         return $true;
     }
 
+    if ($targetDocument.GetState($unit) -eq [XlfTranslationState]::NeedsWorkTranslation) {
+        return $true;
+    }
+
     return $false;
 }
 
