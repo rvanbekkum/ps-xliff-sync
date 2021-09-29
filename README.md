@@ -15,6 +15,14 @@ Initial version with support for XLIFF 1.2 (support for XLIFF 2.0 follows later)
 
 You need to have Powershell 5.0 or newer. This module uses classes.
 
+## Installation
+
+You can install the module from PowerShell Gallery by running:
+
+```powershell
+Install-Module -Name XliffSync
+```
+
 ## Usage
 
 ### Synchronize XLIFF Translations
