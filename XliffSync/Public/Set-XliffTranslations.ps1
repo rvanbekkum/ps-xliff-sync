@@ -10,7 +10,7 @@
  .Parameter unitMaps
   Specifies for which search purposes this command should create in-memory maps in preparation of syncing.
 #>
-function Trans-XliffTranslations {
+function Set-XliffTranslations {
     Param (
         [Parameter(Mandatory = $true)]
         [string] $sourcePath,
@@ -140,3 +140,4 @@ function Trans-XliffTranslations {
     Write-Host "Saving document to $targetPath"
     $targetDocument.SaveToFilePath($targetPath);
 }
+Set-Alias -Name Set-XliffTranslations -Value Trans-XliffTranslations
