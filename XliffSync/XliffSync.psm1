@@ -24,6 +24,7 @@ foreach($folder in @('Public'))
     }
 }
 
+# Export Public Functions
 . (Join-Path $PSScriptRoot "Public\Get-XliffTranslationsDiff.ps1")
 . (Join-Path $PSScriptRoot "Public\Set-XliffTranslations.ps1")
 . (Join-Path $PSScriptRoot "Public\Sync-XliffTranslations.ps1")
