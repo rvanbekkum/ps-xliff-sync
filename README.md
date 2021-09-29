@@ -58,18 +58,19 @@ Please check the documentation of the function for more information and the avai
 
 ### Check XLIFF Translations
 
-The `Check-XliffTranslations` function will check for missing translations and/or for problems in translations in a specified XLIFF file.
+The `Test-XliffTranslations` function (alias: `Check-XliffTranslations`) will check for missing translations and/or for problems in translations in a specified XLIFF file.
 To use the function you will need to specify the target file (`-targetPath`) and whether you want to check for missing translations (`-checkForMissing`) and/or problems in translations (`-checkForProblems`).
 If you let the function check for problems, then you can use the `translationRules` parameter to specify which technical validation rules should be applied.
 
 An example usage:
 
 ```powershell
-Check-XliffTranslations -targetPath "C:\MyProject\My Project.nl-NL.xlf" -checkForMissing -reportProgress
+$unitsWithProblems = Test-XliffTranslations -targetPath "C:\MyProject\My Project.nl-NL.xlf" -checkForMissing -reportProgress
 ```
 
 When finished the function will report the number of missing translations and number of detected problems.
 Translation units without translations will be marked with `state="needs-translation"` and translation units with a problem in the translation will be marked with a 'needs-work' state and an "XLIFF Sync"-note that explains the detected problem.
+The function will return the translation units with problems, which you can assign to a variable (e.g., `$unitsWithProblems`) or omit, to have the output printed.
 
 Please check the documentation of the function for more information and the available parameters.
 
@@ -81,6 +82,18 @@ An example usage:
 
 ```powershell
 Get-XliffTranslationsDiff -originalPath "C:\MyProject\OriginalVersion.xlf" -newPath "C:\MyProject\NewVersion.xlf" -diffPath "C:\MyProject\Diff.xlf" -reportProgress
+```
+
+Please check the documentation of the function for more information and the available parameters.
+
+### Apply Translations to XLIFF Translation Files
+
+The `Set-XliffTranslations` function (alias: `Trans-XliffTranslations`) will apply translations to the translation units in a target file with a translation base from a source file.
+
+An example usage:
+
+```powershell
+Set-XliffTranslations -sourcePath "C:\MyProject\translationSource.xlf" -targetPath "C:\MyProject\translationTarget.xlf"
 ```
 
 Please check the documentation of the function for more information and the available parameters.

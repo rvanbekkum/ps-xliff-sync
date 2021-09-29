@@ -19,10 +19,13 @@ foreach($folder in @('Public'))
         $files = Get-ChildItem -Path $rootPath -Filter *.ps1 -Recurse
 
         # dot source each file
-        $files | Where-Object{ $_.name -NotLike '*.Tests.ps1'} | 
+        $files | Where-Object{ $_.name -NotLike '*.Tests.ps1'} |
             ForEach-Object{Write-Verbose $_.BaseName; . $_.FullName}
     }
 }
 
 # Export Public Functions
-Export-ModuleMember -Function (Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1").BaseName
+. (Join-Path $PSScriptRoot "Public\Get-XliffTranslationsDiff.ps1")
+. (Join-Path $PSScriptRoot "Public\Set-XliffTranslations.ps1")
+. (Join-Path $PSScriptRoot "Public\Sync-XliffTranslations.ps1")
+. (Join-Path $PSScriptRoot "Public\Test-XliffTranslations.ps1")

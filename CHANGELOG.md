@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0] T.B.D.
+
+* Renamed functions to adhere to approved verbs and added aliases to still support the old function names (GitHub issue [#10](https://github.com/rvanbekkum/ps-xliff-sync/issues/10))
+
+### Thank You
+
+* [Jan Hoek](https://github.com/fvet) for filing [Issue #10 "Consider using standard verbs for your cmdlets"](https://github.com/rvanbekkum/ps-xliff-sync/issues/10)
+
 ## [1.2.0] 20-05-2021
 
 * New function `Trans-XliffTranslations` by [Tomáš Žabčík](https://github.com/zabcik)

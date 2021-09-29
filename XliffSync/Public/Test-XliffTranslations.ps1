@@ -24,7 +24,7 @@
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
 #>
-function Check-XliffTranslations {
+function Test-XliffTranslations {
     Param (
         [Parameter(Mandatory=$true)]
         [string] $targetPath,
@@ -351,3 +351,5 @@ function IsConsecutiveSpacesMismatch {
 
     return $false;
 }
+Set-Alias -Name Check-XliffTranslations -Value Test-XliffTranslations
+Export-ModuleMember -Function Test-XliffTranslations -Alias Check-XliffTranslations
