@@ -3,6 +3,7 @@
 ## [1.3.0] T.B.D.
 
 * Renamed functions to adhere to approved verbs and added aliases to still support the old function names (GitHub issue [#10](https://github.com/rvanbekkum/ps-xliff-sync/issues/10))
+* New function `Test-BcAppXliffTranslations`, to be used for checking translations in a build pipeline for Microsoft Dynamics 365 Business Central apps. This function uses the `Sync-XliffTranslations` and `Test-XliffTranslations` functions to check for problems in all translation files of the BC app workspace folder.
 
 ### Thank You
 
