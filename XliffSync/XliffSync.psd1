@@ -8,6 +8,7 @@
     Description       = 'Keep XLIFF translation files easily in sync with a generated base-XLIFF file.'
     PowerShellVersion = '5.0'
     FunctionsToExport = @('Get-XliffTranslationsDiff', 'Set-XliffTranslations', 'Sync-XliffTranslations', 'Test-XliffTranslations')
+    AliasesToExport   = @('Check-XliffTranslations', 'Trans-XliffTranslations')
     PrivateData       = @{
         PSData = @{
             Tags       = @('xliff', 'localization', 'translation', 'dynamics-365', 'synchronization')
