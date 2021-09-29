@@ -1,4 +1,4 @@
-<# 
+<#
  .Synopsis
   Compares XLIFF translation files and creates a new XLIFF translation files with the differences.
  .Description

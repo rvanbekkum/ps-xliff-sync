@@ -1,4 +1,4 @@
-<# 
+<#
  .Synopsis
   Synchronizes translation units and translations with a base XLIFF file to a target XLIFF file.
  .Description
@@ -171,11 +171,11 @@ function Sync-XliffTranslations {
                 }
             }
         }
-        
+
         # Find by ID.
         [System.Xml.XmlNode] $targetUnit = $targetDocument.FindTranslationUnit($unit.id);
         [string] $translation = $null;
-        
+
         if ((-not $targetUnit) -and $findByIsEnabled) {
             [string] $developerNote = $mergedDocument.GetUnitDeveloperNote($unit);
             [string] $sourceText = $mergedDocument.GetUnitSourceText($unit);
@@ -187,7 +187,7 @@ function Sync-XliffTranslations {
                     if ($findByXliffGeneratorNoteAndSource -and $sourceText) {
                         $targetUnit = $targetDocument.FindTranslationUnitByXliffGeneratorNoteAndSourceText($xliffGeneratorNote, $sourceText);
                     }
-        
+
                     # Find by Xliff Generator Note + Dev. Note combination.
                     if ((-not $targetUnit) -and $findByXliffGeneratorAndDeveloperNote -and $developerNote) {
                         $targetUnit = $targetDocument.FindTranslationUnitByXliffGeneratorNoteAndDeveloperNote($xliffGeneratorNote, $developerNote);
@@ -273,7 +273,7 @@ function Sync-XliffTranslations {
             if ($AzureDevOps -ne 'no') {
                 $detectedMessage = "##vso[task.logissue type=$AzureDevOps]$detectedMessage";
             }
-    
+
             $detectedSourceTextChanges | ForEach-Object {
                 Write-Host ($detectedMessage -f $_.id);
             }

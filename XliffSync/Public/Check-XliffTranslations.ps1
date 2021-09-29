@@ -1,4 +1,4 @@
-<# 
+<#
  .Synopsis
   Checks for missing translations and translations that need work/review in an XLIFF file.
  .Description
@@ -135,7 +135,7 @@ function Check-XliffTranslations {
             if ($AzureDevOps -ne 'no') {
                 $detectedMessage = "##vso[task.logissue type=$AzureDevOps]$detectedMessage";
             }
-    
+
             $missingTranslationUnits | ForEach-Object {
                 Write-Host ($detectedMessage -f $_.id);
             }
@@ -151,7 +151,7 @@ function Check-XliffTranslations {
             if ($AzureDevOps -ne 'no') {
                 $detectedMessage = "##vso[task.logissue type=$AzureDevOps]$detectedMessage";
             }
-    
+
             $needWorkTranslationUnits | ForEach-Object {
                 Write-Host ($detectedMessage -f $_.id);
             }
@@ -173,7 +173,7 @@ function HasMissingTranslation {
         [System.Xml.XmlNode] $unit,
         [string] $missingTranslationText
     )
-    
+
     [bool] $needsTranslation = $targetDocument.GetUnitNeedsTranslation($unit);
     if ($needsTranslation) {
         [string] $translation = $targetDocument.GetUnitTranslation($unit);
@@ -191,7 +191,7 @@ function HasProblem {
         [System.Xml.XmlNode] $unit,
         [string[]] $enabledRules
     )
-    
+
     [string] $sourceText = $targetDocument.GetUnitSourceText($unit);
     [string] $translText = $targetDocument.GetUnitTranslation($unit);
     [string] $devNoteText = $targetDocument.GetUnitDeveloperNote($unit);
