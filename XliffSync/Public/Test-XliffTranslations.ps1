@@ -351,4 +351,5 @@ function IsConsecutiveSpacesMismatch {
 
     return $false;
 }
-Set-Alias -Name Test-XliffTranslations -Value Check-XliffTranslations
+Set-Alias -Name Check-XliffTranslations -Value Test-XliffTranslations
+Export-ModuleMember -Function Test-XliffTranslations -Alias Check-XliffTranslations

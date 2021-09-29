@@ -283,3 +283,4 @@ function Sync-XliffTranslations {
     Write-Host "Saving document to $targetPath"
     $mergedDocument.SaveToFilePath($targetPath);
 }
+Export-ModuleMember -Function Sync-XliffTranslations

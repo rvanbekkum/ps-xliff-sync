@@ -140,4 +140,5 @@ function Set-XliffTranslations {
     Write-Host "Saving document to $targetPath"
     $targetDocument.SaveToFilePath($targetPath);
 }
-Set-Alias -Name Set-XliffTranslations -Value Trans-XliffTranslations
+Set-Alias -Name Trans-XliffTranslations -Value Set-XliffTranslations
+Export-ModuleMember -Function Set-XliffTranslations -Alias Trans-XliffTranslations

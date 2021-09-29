@@ -78,3 +78,4 @@ function Get-XliffTranslationsDiff {
     Write-Host "Saving document to $diffPath"
     $diffDocument.SaveToFilePath($diffPath);
 }
+Export-ModuleMember -Function Get-XliffTranslationsDiff
