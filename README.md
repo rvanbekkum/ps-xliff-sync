@@ -58,7 +58,7 @@ Please check the documentation of the function for more information and the avai
 
 ### Check XLIFF Translations
 
-The `Test-XliffTranslations` function (or `Check-XliffTranslations`) will check for missing translations and/or for problems in translations in a specified XLIFF file.
+The `Test-XliffTranslations` function (alias: `Check-XliffTranslations`) will check for missing translations and/or for problems in translations in a specified XLIFF file.
 To use the function you will need to specify the target file (`-targetPath`) and whether you want to check for missing translations (`-checkForMissing`) and/or problems in translations (`-checkForProblems`).
 If you let the function check for problems, then you can use the `translationRules` parameter to specify which technical validation rules should be applied.
 
@@ -70,7 +70,7 @@ $unitsWithProblems = Test-XliffTranslations -targetPath "C:\MyProject\My Project
 
 When finished the function will report the number of missing translations and number of detected problems.
 Translation units without translations will be marked with `state="needs-translation"` and translation units with a problem in the translation will be marked with a 'needs-work' state and an "XLIFF Sync"-note that explains the detected problem.
-The function will return the translation units with problems.
+The function will return the translation units with problems, which you can assign to a variable (e.g., `$unitsWithProblems`) or omit, to have the output printed.
 
 Please check the documentation of the function for more information and the available parameters.
 
@@ -88,7 +88,7 @@ Please check the documentation of the function for more information and the avai
 
 ### Apply Translations to XLIFF Translation Files
 
-The `Set-XliffTranslations` function will apply translations to the translation units in a target file with a translation base from a source file.
+The `Set-XliffTranslations` function (alias: `Trans-XliffTranslations`) will apply translations to the translation units in a target file with a translation base from a source file.
 
 An example usage:
 
