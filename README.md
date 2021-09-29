@@ -65,11 +65,12 @@ If you let the function check for problems, then you can use the `translationRul
 An example usage:
 
 ```powershell
-Test-XliffTranslations -targetPath "C:\MyProject\My Project.nl-NL.xlf" -checkForMissing -reportProgress
+$unitsWithProblems = Test-XliffTranslations -targetPath "C:\MyProject\My Project.nl-NL.xlf" -checkForMissing -reportProgress
 ```
 
 When finished the function will report the number of missing translations and number of detected problems.
 Translation units without translations will be marked with `state="needs-translation"` and translation units with a problem in the translation will be marked with a 'needs-work' state and an "XLIFF Sync"-note that explains the detected problem.
+The function will return the translation units with problems.
 
 Please check the documentation of the function for more information and the available parameters.
 
