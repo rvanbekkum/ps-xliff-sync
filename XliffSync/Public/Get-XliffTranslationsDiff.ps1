@@ -1,4 +1,4 @@
-<# 
+<#
  .Synopsis
   Compares XLIFF translation files and creates a new XLIFF translation files with the differences.
  .Description
@@ -78,3 +78,4 @@ function Get-XliffTranslationsDiff {
     Write-Host "Saving document to $diffPath"
     $diffDocument.SaveToFilePath($diffPath);
 }
+Export-ModuleMember -Function Get-XliffTranslationsDiff
