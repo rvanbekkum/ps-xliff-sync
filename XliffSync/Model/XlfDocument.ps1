@@ -11,7 +11,7 @@ class XlfDocument {
     hidden $xliffGeneratorNote;
     hidden $sourceDeveloperNoteUnitMap;
     hidden $sourceUnitMap;
-    
+
     [string] $developerNoteDesignation;
     [string] $xliffGeneratorNoteDesignation;
     [boolean] $preserveTargetAttributes;
@@ -32,7 +32,7 @@ class XlfDocument {
 
     [string] GetSourceLanguage() {
         switch ($this.Version()) {
-            "1.2" { 
+            "1.2" {
                 [System.Xml.XmlNode] $fileNode = [XlfDocument]::GetNode('file', $this.root);
                 if ($fileNode) {
                     return $fileNode.'source-language';
@@ -48,7 +48,7 @@ class XlfDocument {
         }
 
         switch ($this.Version()) {
-            "1.2" { 
+            "1.2" {
                 [System.Xml.XmlNode] $fileNode = [XlfDocument]::GetNode('file', $this.root);
                 if ($fileNode) {
                     $fileNode.'source-language' = $lng
@@ -60,7 +60,7 @@ class XlfDocument {
 
     [string] GetTargetLanguage() {
         switch ($this.Version()) {
-            "1.2" { 
+            "1.2" {
                 [System.Xml.XmlNode] $fileNode = [XlfDocument]::GetNode('file', $this.root);
                 if ($fileNode) {
                     return $fileNode.'target-language';
@@ -76,7 +76,7 @@ class XlfDocument {
         }
 
         switch ($this.Version()) {
-            "1.2" { 
+            "1.2" {
                 [System.Xml.XmlNode] $fileNode = [XlfDocument]::GetNode('file', $this.root);
                 if ($fileNode) {
                     $fileNode.'target-language' = $lng;
@@ -88,7 +88,7 @@ class XlfDocument {
     [void] CreateUnitMaps([bool] $findByXliffGeneratorNoteAndSource, [bool] $findByXliffGeneratorAndDeveloperNote, [bool] $findByXliffGeneratorNote, [bool] $findBySourceAndDeveloperNote, [bool] $findBySource) {
         [bool] $findByXliffGenNotesIsEnabled = $findByXliffGeneratorNoteAndSource -or $findByXliffGeneratorAndDeveloperNote -or $findByXliffGeneratorNote;
         [bool] $findByIsEnabled = $findByXliffGenNotesIsEnabled -or $findBySourceAndDeveloperNote -or $findBySource;
-        
+
         $this.idUnitMap = @{}
         $this.xliffGeneratorNoteSourceUnitMap = @{};
         $this.xliffGeneratorNoteDeveloperNoteUnitMap = @{};
@@ -232,7 +232,7 @@ class XlfDocument {
         [System.Xml.XmlNode] $parentNode = $this.cachedImportParentNode;
         if (-not $this.cachedImportParentNode) {
             switch ($this.Version()) {
-                "1.2" { 
+                "1.2" {
                     # Parent will be the first 'group' or 'body' node.
                     $parentNode = [XlfDocument]::GetNode('group', $this.root);
                     if (-not $parentNode) {
@@ -435,7 +435,7 @@ class XlfDocument {
         }
         elseif ($targetChildNode -and ($this.Version() -eq "1.2")) {
             $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
-            
+
             # Add the same whitespace after the note.
             $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($targetChildNode.PreviousSibling, $true);
             $unit.InsertAfter($newWhiteSpaceNode, $noteNode);
@@ -501,10 +501,10 @@ class XlfDocument {
         }
 
         switch ($this.Version()) {
-            "1.2" { 
+            "1.2" {
                 [System.Xml.XmlNode] $sourceChildNode = $unit.ChildNodes | Where-Object { $_.Name -eq "source" } | Select-Object -First 1;
                 [System.Xml.XmlNode] $targetChildNode = $unit.ChildNodes | Where-Object { $_.Name -eq "target" } | Select-Object -First 1;
-                
+
                 if ($targetChildNode) {
                     $unit.ReplaceChild($targetNode, $targetChildNode);
                 }
@@ -646,6 +646,7 @@ class XlfDocument {
     }
 
     [void] SaveToFilePath([string] $filePath) {
+        $filePath = Resolve-Path $filePath
         $this.root.OwnerDocument.Save($filePath);
     }
 
@@ -766,7 +767,7 @@ class XlfDocument {
     hidden static [XlfDocument] LoadFromRootNode([System.Xml.XmlNode] $rootNode) {
         [XlfDocument] $doc = [XlfDocument]::new();
         $doc.root = $rootNode;
-        
+
         if ($doc.Version() -ne "1.2") {
             throw "Currently this module only supports XLIFF 1.2 Files. Support for XLIFF 2.0 will be added later.";
         }
@@ -784,6 +785,8 @@ class XlfDocument {
     }
 
     static [XlfDocument] LoadFromPath([string] $filePath) {
+        $ErrorActionPreference = 'Stop'
+        $filePath = Resolve-Path $filePath
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
         $fileContentXml.Load($filePath);
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
@@ -792,17 +795,17 @@ class XlfDocument {
     [void] AddFromPath([string] $filePath) {
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
         $fileContentXml.Load($filePath);
-        $xlfDoc = [XlfDocument]::LoadFromXmlDocument($fileContentXml);        
-                
+        $xlfDoc = [XlfDocument]::LoadFromXmlDocument($fileContentXml);
+
         if ($null -ne $this.root) {
             [xml] $xmlDoc = $this.root.OwnerDocument;
-            $group = [XlfDocument]::GetNode('group', $xlfDoc.root);          
+            $group = [XlfDocument]::GetNode('group', $xlfDoc.root);
             $imported = $xmlDoc.ImportNode($group, $true);
             $groupImported = [XlfDocument]::GetNode('group', $this.root);
             $groupImported.AppendChild($imported);
         } else {
             $this.root = $xlfDoc.root;
-        }        
+        }
     }
 }
 
