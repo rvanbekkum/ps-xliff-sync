@@ -100,7 +100,7 @@ Please check the documentation of the function for more information and the avai
 
 ### Check Translations of your Microsoft Dynamics 365 Business Central apps
 
-The `Test-BcAppXliffTranslations` function (alias: `Check-BcAppXliffTranslations`) checks for problems in translations in the XLIFF translation files used for Microsoft Dynamics 365 Business Central app.
+The `Test-BcAppXliffTranslations` function (alias: `Check-BcAppXliffTranslations`) checks for problems in translations in the XLIFF translation files used for Microsoft Dynamics 365 Business Central apps.
 It first synchronizes the translation files with the `.g.xlf` base file, and then checks for problems afterwards.
 You can use this function in the build pipelines of your Business Central apps after the compile step, to detect problems in the translations of your Business Central apps.
 
