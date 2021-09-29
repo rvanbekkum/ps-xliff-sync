@@ -646,6 +646,7 @@ class XlfDocument {
     }
 
     [void] SaveToFilePath([string] $filePath) {
+        $filePath = Resolve-Path $filePath
         $this.root.OwnerDocument.Save($filePath);
     }
 
@@ -766,7 +767,7 @@ class XlfDocument {
     hidden static [XlfDocument] LoadFromRootNode([System.Xml.XmlNode] $rootNode) {
         [XlfDocument] $doc = [XlfDocument]::new();
         $doc.root = $rootNode;
-        
+
         if ($doc.Version() -ne "1.2") {
             throw "Currently this module only supports XLIFF 1.2 Files. Support for XLIFF 2.0 will be added later.";
         }
@@ -784,6 +785,8 @@ class XlfDocument {
     }
 
     static [XlfDocument] LoadFromPath([string] $filePath) {
+        $ErrorActionPreference = 'Stop'
+        $filePath = Resolve-Path $filePath
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
         $fileContentXml.Load($filePath);
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
