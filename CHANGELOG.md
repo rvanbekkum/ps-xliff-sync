@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] 20-05-2021
+
+* New function `Trans-XliffTranslations` by [Tomáš Žabčík](https://github.com/zabcik)
+* Include units that already have needs-adaptation state in needs work count (GitHub issue [#8](https://github.com/rvanbekkum/ps-xliff-sync/issues/8))
+
+### Thank You
+
+* [Tomáš Žabčík](https://github.com/zabcik) for your [Pull Request #9 "New Functions Trans-XliffTranslations"](https://github.com/rvanbekkum/ps-xliff-sync/pull/9)
+* [Frédéric Vercaemst](https://github.com/fvet) for filing [Issue #8 "Translation(s) that need work - no output compared to Xliff-sync"](https://github.com/rvanbekkum/ps-xliff-sync/issues/8)
+
 ## [1.1.0] 06-03-2021
 
 * Fix for `findByXliffGeneratorNoteAndSourceText` throwing error on variable not being found.
