@@ -788,13 +788,13 @@ class XlfDocument {
         $ErrorActionPreference = 'Stop'
         $filePath = Resolve-Path $filePath
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
-        $fileContentXml.Load($filePath);
+        $fileContentXml.Load("$filePath");
         return [XlfDocument]::LoadFromXmlDocument($fileContentXml);
     }
 
     [void] AddFromPath([string] $filePath) {
         [xml] $fileContentXml = (New-Object System.Xml.XmlDocument);
-        $fileContentXml.Load($filePath);
+        $fileContentXml.Load("$filePath");
         $xlfDoc = [XlfDocument]::LoadFromXmlDocument($fileContentXml);
 
         if ($null -ne $this.root) {
