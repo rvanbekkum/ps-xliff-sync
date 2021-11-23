@@ -646,7 +646,9 @@ class XlfDocument {
     }
 
     [void] SaveToFilePath([string] $filePath) {
-        $filePath = Resolve-Path $filePath
+        if(Test-Path $filePath){
+            $filePath = Resolve-Path $filePath
+        }
         $this.root.OwnerDocument.Save($filePath);
     }
 

@@ -105,7 +105,7 @@ function Sync-XliffTranslations {
 
     [XlfDocument] $targetDocument = $null;
     if (-not $targetPath) {
-        $targetPath = $sourcePath -replace '(\.g)?\.xlf', ".$targetLanguage.xlf"
+        $targetPath = (Resolve-Path $sourcePath) -replace '(\.g)?\.xlf', ".$targetLanguage.xlf"
     }
 
     if (Test-Path $targetPath) {
