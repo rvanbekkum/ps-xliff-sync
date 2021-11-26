@@ -24,18 +24,18 @@
 #>
 function Test-BcAppXliffTranslations {
     Param(
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $buildProjectFolder = $ENV:BUILD_REPOSITORY_LOCALPATH,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string[]] $appFolders = @(),
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("ConsecutiveSpacesConsistent", "ConsecutiveSpacesExist", "OptionMemberCount", "OptionLeadingSpaces", "Placeholders", "PlaceholdersDevNote")]
         [string[]] $translationRules = @("ConsecutiveSpacesConsistent", "OptionMemberCount", "OptionLeadingSpaces", "Placeholders"),
         [switch] $translationRulesEnableAll,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string[]] $restrictErrorsToLanguages = @(),
-        [Parameter(Mandatory=$false)]
-        [ValidateSet('no','error','warning')]
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('no', 'error', 'warning')]
         [string] $AzureDevOps = 'warning',
         [switch] $reportProgress,
         [switch] $printProblems,

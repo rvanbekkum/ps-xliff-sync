@@ -50,16 +50,16 @@
 #>
 function Sync-XliffTranslations {
     Param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $sourcePath,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $targetPath,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $targetLanguage,
-        [Parameter(Mandatory=$false)]
-        [string] $developerNoteDesignation="Developer",
-        [Parameter(Mandatory=$false)]
-        [string] $xliffGeneratorNoteDesignation="Xliff Generator",
+        [Parameter(Mandatory = $false)]
+        [string] $developerNoteDesignation = "Developer",
+        [Parameter(Mandatory = $false)]
+        [string] $xliffGeneratorNoteDesignation = "Xliff Generator",
         [switch] $preserveTargetAttributes,
         [switch] $preserveTargetAttributesOrder,
         [switch] $findByXliffGeneratorNoteAndSource,
@@ -69,18 +69,18 @@ function Sync-XliffTranslations {
         [switch] $findBySource,
         [switch] $parseFromDeveloperNote,
         [switch] $parseFromDeveloperNoteOverwrite,
-        [string] $parseFromDeveloperNoteSeparator="|",
+        [string] $parseFromDeveloperNoteSeparator = "|",
         [switch] $copyFromSource,
         [switch] $copyFromSourceOverwrite,
-        [Parameter(Mandatory=$false)]
-        [boolean] $detectSourceTextChanges=$true,
-        [Parameter(Mandatory=$false)]
-        [string] $missingTranslation="",
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
+        [boolean] $detectSourceTextChanges = $true,
+        [Parameter(Mandatory = $false)]
+        [string] $missingTranslation = "",
+        [Parameter(Mandatory = $false)]
         [ValidateSet("None", "Id", "All")]
         [string] $unitMaps = "All",
-        [Parameter(Mandatory=$false)]
-        [ValidateSet('no','error','warning')]
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('no', 'error', 'warning')]
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
         [switch] $printProblems
@@ -110,9 +110,8 @@ function Sync-XliffTranslations {
 
     if (Test-Path $targetPath) {
         Write-Host "Loading target document $targetPath";
-        $targetDocument = [XlfDocument]::LoadFromPath($targetPath);;
-    }
-    else {
+        $targetDocument = [XlfDocument]::LoadFromPath($targetPath); ;
+    } else {
         Write-Host "Creating new document for language '$targetLanguage'";
         $targetDocument = [XlfDocument]::CreateCopyFrom($mergedDocument, $targetLanguage);
     }
@@ -130,8 +129,7 @@ function Sync-XliffTranslations {
         Write-Host "Creating Maps in memory for target document's units.";
         if ($unitMaps -eq "Id") {
             $targetDocument.CreateUnitMaps($false, $false, $false, $false, $false);
-        }
-        else {
+        } else {
             $targetDocument.CreateUnitMaps($findByXliffGeneratorNoteAndSource, $findByXliffGeneratorAndDeveloperNote, $findByXliffGeneratorNote, $findBySourceAndDeveloperNote, $findBySource);
         }
     }
@@ -150,8 +148,7 @@ function Sync-XliffTranslations {
     if ($reportProgress) {
         if ($AzureDevOps -ne 'no') {
             Write-Host "##vso[task.setprogress value=0;]$progressMessage";
-        }
-        else {
+        } else {
             Write-Progress -Activity $progressMessage -PercentComplete 0;
         }
     }
@@ -165,8 +162,7 @@ function Sync-XliffTranslations {
                 $percentage = ($i / $unitCount) * 100;
                 if ($AzureDevOps -ne 'no') {
                     Write-Host "##vso[task.setprogress value=$percentage;]$progressMessage";
-                }
-                else {
+                } else {
                     Write-Progress -Activity $progressMessage -PercentComplete $percentage;
                 }
             }
@@ -219,8 +215,7 @@ function Sync-XliffTranslations {
                                 $sourceTranslationsHashTable[$sourceText] = $translation;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         $translation = $sourceTranslationsHashTable[$sourceText];
                     }
                 }
@@ -232,8 +227,7 @@ function Sync-XliffTranslations {
             if ($targetUnit) {
                 [string] $targetTranslation = $targetDocument.GetUnitTranslation($targetUnit);
                 $hasNoTranslation = (-not $targetTranslation) -or ($targetTranslation -eq $missingTranslation);
-            }
-            else {
+            } else {
                 $hasNoTranslation = $true;
             }
 
