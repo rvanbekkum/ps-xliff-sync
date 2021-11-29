@@ -5,22 +5,19 @@ param()
 $modelList = @(
     'XlfDocument'
 )
-foreach($model in $modelList)
-{
+foreach ($model in $modelList) {
     . "$PSScriptRoot\Model\$model.ps1"
 }
 
 # Load Functions
-foreach($folder in @('Public'))
-{
+foreach ($folder in @('Public')) {
     $rootPath = Join-Path -Path $PSScriptRoot -ChildPath $folder
-    if(Test-Path -Path $rootPath)
-    {
+    if (Test-Path -Path $rootPath) {
         $files = Get-ChildItem -Path $rootPath -Filter *.ps1 -Recurse
 
         # dot source each file
-        $files | Where-Object{ $_.name -NotLike '*.Tests.ps1'} |
-            ForEach-Object{Write-Verbose $_.BaseName; . $_.FullName}
+        $files | Where-Object { $_.name -NotLike '*.Tests.ps1' } |
+            ForEach-Object { Write-Verbose $_.BaseName; . $_.FullName }
     }
 }
 

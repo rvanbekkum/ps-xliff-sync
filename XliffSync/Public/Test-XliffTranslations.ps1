@@ -26,28 +26,29 @@
 #>
 function Test-XliffTranslations {
     Param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $targetPath,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $checkForMissing,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $checkForProblems,
-        [Parameter(Mandatory=$false)]
-        [string] $developerNoteDesignation="Developer",
-        [Parameter(Mandatory=$false)]
-        [string] $xliffGeneratorNoteDesignation="Xliff Generator",
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
+        [string] $developerNoteDesignation = "Developer",
+        [Parameter(Mandatory = $false)]
+        [string] $xliffGeneratorNoteDesignation = "Xliff Generator",
+        [Parameter(Mandatory = $false)]
         [string] $missingTranslation = "",
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("ConsecutiveSpacesConsistent", "ConsecutiveSpacesExist", "OptionMemberCount", "OptionLeadingSpaces", "Placeholders", "PlaceholdersDevNote")]
         [string[]] $translationRules,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $translationRulesEnableAll,
-        [Parameter(Mandatory=$false)]
-        [ValidateSet('no','error','warning')]
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('no', 'error', 'warning')]
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
-        [switch] $printProblems
+        [switch] $printProblems,
+        [switch] $PassThru
     )
 
     # Abort if both $checkForMissing and $checkForProblems are missing.
@@ -81,8 +82,7 @@ function Test-XliffTranslations {
     if ($reportProgress) {
         if ($AzureDevOps -ne 'no') {
             Write-Host "##vso[task.setprogress value=0;]$progressMessage";
-        }
-        else {
+        } else {
             Write-Progress -Activity $progressMessage -PercentComplete 0;
         }
     }
@@ -96,8 +96,7 @@ function Test-XliffTranslations {
                 $percentage = ($i / $unitCount) * 100;
                 if ($AzureDevOps -ne 'no') {
                     Write-Host "##vso[task.setprogress value=$percentage;]$progressMessage";
-                }
-                else {
+                } else {
                     Write-Progress -Activity $progressMessage -PercentComplete $percentage;
                 }
             }
@@ -252,7 +251,7 @@ function IsPlaceholdersMismatch {
         [string] $translationText
     )
 
-    return (HasMissingPlaceholders -textWithPlaceholders $sourceText -textToCheck $translationText) -or 
+    return (HasMissingPlaceholders -textWithPlaceholders $sourceText -textToCheck $translationText) -or
            (HasMissingPlaceholders -textWithPlaceholders $translationText -textToCheck $sourceText);
 }
 
