@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "powershell.codeFormatting.preset": "OTBS",
+    "powershell.codeFormatting.autoCorrectAliases": true,
+    "powershell.codeFormatting.ignoreOneLineBlock": true,
+    "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
+    "powershell.codeFormatting.useCorrectCasing": true
+}
