@@ -16,11 +16,11 @@
 #>
 function Get-XliffTranslationsDiff {
     Param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $originalPath,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $newPath,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $diffPath,
         [switch] $newOnly,
         [switch] $reportProgress
@@ -65,8 +65,7 @@ function Get-XliffTranslationsDiff {
         [bool] $foundInOriginal = $idMap.ContainsKey($unit.id);
         if (-not $foundInOriginal) {
             $diffDocument.ImportUnit($unit);
-        }
-        elseif (-not $newOnly) {
+        } elseif (-not $newOnly) {
             $originalSourceText = $idMap[$unit.id];
             $newSourceText = $newDocument.GetUnitSourceText($unit);
             if ($newSourceText -ne $originalSourceText) {

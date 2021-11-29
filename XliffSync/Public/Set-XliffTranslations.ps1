@@ -30,7 +30,7 @@ function Set-XliffTranslations {
     Write-Host "Loading source document $sourcePath";
     [XlfDocument] $sourceDocument = [XlfDocument]::new();
     $filter = "*.$targetLanguage.xlf";
-    Get-ChildItem -Path $sourcePath -Filter $filter -Recurse | foreach-object -process {
+    Get-ChildItem -Path $sourcePath -Filter $filter -Recurse | ForEach-Object -Process {
         if ($_) {
             $targetPath2 = $_.FullName;
             Write-Host "Loading target document $targetPath2";
@@ -42,8 +42,7 @@ function Set-XliffTranslations {
         Write-Host "Creating Maps in memory for source document's units.";
         if ($unitMaps -eq "Id") {
             $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $false);
-        }
-        else {
+        } else {
             [bool] $findBySource = $true;
             $sourceDocument.CreateUnitMaps($false, $false, $false, $false, $findBySource);
         }
@@ -53,8 +52,7 @@ function Set-XliffTranslations {
         Write-Host "Creating Maps in memory for target document's units.";
         if ($unitMaps -eq "Id") {
             $targetDocument.CreateUnitMaps($false, $false, $false, $false, $false);
-        }
-        else {
+        } else {
             [bool] $findBySource = $true;
             $targetDocument.CreateUnitMaps($false, $false, $false, $false, $findBySource);
         }

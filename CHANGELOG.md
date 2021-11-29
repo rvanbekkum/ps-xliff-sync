@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.4.0] 29-11-2021
+
+* Changes in usage of `Resolve-Path` for scenarios where the `-targetLanguage` parameter of `Sync-XliffTranslations` is used.
+* Added formatting settings (`.vscode/settings.json`) for PowerShell formatting (GitHub issue [#23](https://github.com/rvanbekkum/ps-xliff-sync/issues/23))
+
+### Thank You (for 1.4.0)
+
+* [David FeldHoff](https://github.com/DavidFeldhoff) for your [Pull Request #19 "Resolve-Path gets an error if the file does not exist yet."](https://github.com/rvanbekkum/ps-xliff-sync/pull/19)
+* [Jan Hoek](https://github.com/jhoek) for your [Pull Request #24 "Chose formatting settings that matched current formatting as much as possible"](https://github.com/rvanbekkum/ps-xliff-sync/pull/19)
+
 ## [1.3.0] 29-09-2021
 
 * Renamed functions to adhere to approved verbs and added aliases to still support the old function names (GitHub issue [#10](https://github.com/rvanbekkum/ps-xliff-sync/issues/10))
