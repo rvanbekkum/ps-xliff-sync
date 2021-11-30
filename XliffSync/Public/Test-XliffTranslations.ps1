@@ -23,6 +23,9 @@
   Specifies whether the command should report progress.
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
 #>
 function Test-XliffTranslations {
     Param (
@@ -48,7 +51,9 @@ function Test-XliffTranslations {
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
         [switch] $printProblems,
-        [switch] $PassThru
+        [switch] $PassThru,
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
 
     # Abort if both $checkForMissing and $checkForProblems are missing.
@@ -136,7 +141,7 @@ function Test-XliffTranslations {
             }
 
             $missingTranslationUnits | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
@@ -152,7 +157,7 @@ function Test-XliffTranslations {
             }
 
             $needWorkTranslationUnits | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
