@@ -51,7 +51,6 @@ function Test-XliffTranslations {
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
         [switch] $printProblems,
-        [switch] $PassThru,
         [ValidateNotNull()]
         [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
@@ -78,8 +77,8 @@ function Test-XliffTranslations {
         $onePercentCount = 1;
     }
 
-    [System.Xml.XmlNode[]] $missingTranslationUnits = @();
-    [System.Xml.XmlNode[]] $needWorkTranslationUnits = @();
+    $missingTranslationUnits = New-Object -TypeName 'System.Collections.Generic.List[System.Xml.XmlNode]'
+    $needWorkTranslationUnits = New-Object -TypeName 'System.Collections.Generic.List[System.Xml.XmlNode]'
     [bool] $problemResolvedInFile = $false;
 
     Write-Host "Processing unit nodes... (Please be patient)";
@@ -110,7 +109,7 @@ function Test-XliffTranslations {
         if ($checkForMissing) {
             if (HasMissingTranslation -targetDocument $targetDocument -unit $unit -missingTranslationText $missingTranslation) {
                 $targetDocument.SetState($unit, [XlfTranslationState]::MissingTranslation);
-                $missingTranslationUnits += $unit;
+                $missingTranslationUnits.Add($unit);
             }
 
         }
@@ -118,7 +117,7 @@ function Test-XliffTranslations {
         if ($checkForProblems -and $translationRules) {
             if (HasProblem -targetDocument $targetDocument -unit $unit -enabledRules $translationRules) {
                 $targetDocument.SetState($unit, [XlfTranslationState]::NeedsWorkTranslation);
-                $needWorkTranslationUnits += $unit;
+                $needWorkTranslationUnits.Add($unit);
             }
 
             # Check for resolved problem (to delete XLIFF Sync note)
@@ -168,7 +167,8 @@ function Test-XliffTranslations {
         $targetDocument.SaveToFilePath($targetPath);
     }
 
-    return $missingTranslationUnits + $needWorkTranslationUnits;
+    $missingTranslationUnits
+    $needWorkTranslationUnits;
 }
 
 function HasMissingTranslation {
