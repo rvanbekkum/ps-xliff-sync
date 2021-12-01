@@ -32,6 +32,8 @@ param(
     [string]$CategoryId = "general"
 )
 
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
     function Translate-String {
         param (
             [Parameter(Mandatory=$true)]
@@ -50,7 +52,7 @@ param(
         # API Auth Headers
         $headers = @{}
         $headers.Add("Ocp-Apim-Subscription-Key",$apiKey)
-        $headers.Add("Ocp-Apim-Subscription-Region", $region);
+        $headers.Add("Ocp-Apim-Subscription-Region", $region)
         $headers.Add("Content-Type","application/json")
         # Conversion URI
         $convertURI = "$($translateBaseURI)&from=$($sourceLanguage)&to=$($targetLanguage)"
