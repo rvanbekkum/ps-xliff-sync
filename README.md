@@ -77,13 +77,13 @@ If you use the `-printProblems` parameter, then you can use the `-FormatTranslat
 The default value for this parameter is set to show the ID of the trans-unit, i.e.:
 
 ```powershell
-{ param($TranslationUnit) $TranslationUnit.id }
+-FormatTranslationUnit { param($TranslationUnit) $TranslationUnit.id }
 ```
 
 For Business Central app translation use cases, you could change this to show the XLIFF Generator note, which is also the default for [`Test-BcAppXliffTranslations`](#check-translations-of-your-microsoft-dynamics-365-business-central-apps), i.e.:
 
 ```powershell
-{ param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
+-FormatTranslationUnit { param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
 ```
 
 Please check the documentation of the function for more information and the available parameters.
