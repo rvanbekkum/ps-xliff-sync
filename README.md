@@ -18,7 +18,7 @@ You need to have Powershell 5.0 or newer. This module uses classes.
 
 ## Installation
 
-You can install the module from PowerShell Gallery by running:
+You can install the module from [PowerShell Gallery](https://www.powershellgallery.com/packages/XliffSync/) by running:
 
 ```powershell
 Install-Module -Name XliffSync
@@ -73,6 +73,19 @@ When finished the function will report the number of missing translations and nu
 Translation units without translations will be marked with `state="needs-translation"` and translation units with a problem in the translation will be marked with a 'needs-work' state and an "XLIFF Sync"-note that explains the detected problem.
 The function will return the translation units with problems, which you can assign to a variable (e.g., `$unitsWithProblems`) or omit, to have the output printed.
 
+If you use the `-printProblems` parameter, then you can use the `-FormatTranslationUnit` to specify which part of the trans-units should be printed.
+The default value for this parameter is set to show the ID of the trans-unit, i.e.:
+
+```powershell
+{ param($TranslationUnit) $TranslationUnit.id }
+```
+
+For Business Central app translation use cases, you could change this to show the XLIFF Generator note, which is also the default for [`Test-BcAppXliffTranslations`](#check-translations-of-your-microsoft-dynamics-365-business-central-apps), i.e.:
+
+```powershell
+{ param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
+```
+
 Please check the documentation of the function for more information and the available parameters.
 
 ### Get XLIFF Translation Files Diff
@@ -109,6 +122,13 @@ An example usage:
 
 ```powershell
 Test-BcAppXliffTranslations -translationRulesEnableAll -AzureDevOps 'error' -printProblems
+```
+
+This function invokes the `Sync-XliffTranslations` and `Test-XliffTranslations` functions for each XLIFF translation file in the app folder(s).
+Note that you can use the `-syncAdditionalParameters` and `-testAdditionalParameters` parameters to pass arguments specific to each of these functions respectively, e.g.:
+
+```powershell
+-syncAdditionalParameters @{ "parseFromDeveloperNote" = $true }
 ```
 
 Please check the documentation of the function for more information and the available parameters.

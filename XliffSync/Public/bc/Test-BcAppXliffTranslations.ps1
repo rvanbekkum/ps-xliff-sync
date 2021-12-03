@@ -21,6 +21,13 @@
   Specifies whether the command should print all detected problems.
  .Parameter printUnitsWithErrors
   Specifies whether the command should print the units with errors.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
+ .Parameter syncAdditionalParameters
+  Specifies additional parameters to pass as arguments to the Sync-XliffTranslations function that is invoked by this function.
+ .Parameter testAdditionalParameters
+ Specifies additional parameters to pass as arguments to the Test-XliffTranslations function that is invoked by this function.
 #>
 function Test-BcAppXliffTranslations {
     Param(

@@ -47,6 +47,9 @@
   Specifies whether the command should report progress.
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
 #>
 function Sync-XliffTranslations {
     Param (
