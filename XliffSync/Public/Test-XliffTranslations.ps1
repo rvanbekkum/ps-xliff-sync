@@ -55,6 +55,8 @@ function Test-XliffTranslations {
         [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
 
+    Write-Verbose "Passed parameters:`n$($PsBoundParameters | Out-String)"
+
     # Abort if both $checkForMissing and $checkForProblems are missing.
     if (-not $checkForMissing -and -not $checkForProblems) {
         throw "You need to use at least one of the following parameters: -checkForMissing, -checkForProblems";
