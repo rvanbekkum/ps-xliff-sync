@@ -39,7 +39,11 @@ function Test-BcAppXliffTranslations {
         [string] $AzureDevOps = 'warning',
         [switch] $reportProgress,
         [switch] $printProblems,
-        [switch] $printUnitsWithErrors
+        [switch] $printUnitsWithErrors,
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
+        $syncAdditionalParameters = @{},
+        $testAdditionalParameters = @{}
     )
 
     if ((-not $appFolders) -or ($appFolders.Length -eq 0)) {
@@ -67,9 +71,9 @@ function Test-BcAppXliffTranslations {
             }
 
             Write-Host "Syncing to file $($targetXliffFile.FullName)"
-            Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems
+            Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems -FormatTranslationUnit $FormatTranslationUnit @syncAdditionalParameters
             Write-Host "Checking translations in file $($targetXliffFile.FullName)"
-            $unitsWithIssues = Test-XliffTranslations -targetPath $targetXliffFile.FullName -checkForMissing -checkForProblems -translationRules $translationRules -translationRulesEnableAll:$translationRulesEnableAll -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems
+            $unitsWithIssues = Test-XliffTranslations -targetPath $targetXliffFile.FullName -checkForMissing -checkForProblems -translationRules $translationRules -translationRulesEnableAll:$translationRulesEnableAll -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -FormatTranslationUnit $FormatTranslationUnit -printProblems:$printProblems @testAdditionalParameters
 
             if ($unitsWithIssues.Count -gt 0) {
                 Write-Host "Issues detected in file $($targetXliffFile.FullName)."
