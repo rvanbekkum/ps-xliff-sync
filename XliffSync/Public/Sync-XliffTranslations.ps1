@@ -83,8 +83,12 @@ function Sync-XliffTranslations {
         [ValidateSet('no', 'error', 'warning')]
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
-        [switch] $printProblems
+        [switch] $printProblems,
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
+
+    Write-Verbose "Passed parameters:`n$($PsBoundParameters | Out-String)"
 
     # Abort if both $targetPath and $targetLanguage are missing.
     if (-not $targetPath -and -not $targetLanguage) {
@@ -269,7 +273,7 @@ function Sync-XliffTranslations {
             }
 
             $detectedSourceTextChanges | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
