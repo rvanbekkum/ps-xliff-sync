@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0] 07-12-2021
+
+* Added `-FormatTranslationUnit` parameter to `Test-XliffTranslations` function. (GitHub issue [#21](https://github.com/rvanbekkum/ps-xliff-sync/issues/21))
+* Added `-FormatTranslationUnit` parameter to `Sync-XliffTranslations` and `Test-BcAppXliffTranslations` functions. The latter has a default value that will print the AL object/field/action/control concerned. (GitHub issue [#21](https://github.com/rvanbekkum/ps-xliff-sync/issues/21))
+* Write parameters when `-Verbose` switch is used with `Sync-XliffTranslations` or `Test-XliffTranslations` functions.
+* Use `List[]` instead of array(s) in the `Test-XliffTranslations` function. (GitHub issue [#18](https://github.com/rvanbekkum/ps-xliff-sync/issues/18))
+* Use `List[]` instead of array(s) in the `Sync-XliffTranslations` function. (GitHub issue [#18](https://github.com/rvanbekkum/ps-xliff-sync/issues/18))
+* Added parameters `-syncAdditionalParameters` and `-testAdditionalParameters` to `Test-BcAppXliffTranslations` function. (GitHub issue [#22](https://github.com/rvanbekkum/ps-xliff-sync/issues/22))
+* Fixed detected source text changes not being included in the detected issues.
+
+### Thank You (for 1.5.0)
+
+* [Jan Hoek](https://github.com/jhoek) for your [Pull Request #26 "Added -FormatTranslationUnit parameter"](https://github.com/rvanbekkum/ps-xliff-sync/pull/26) which adds the `-FormatTranslationUnit` parameter to `Test-XliffTranslations`.
+* [Jan Hoek](https://github.com/jhoek) for your [Pull Request #27 "Use List[] instead of arrays"](https://github.com/rvanbekkum/ps-xliff-sync/pull/27) which changes `Test-XliffTranslations` to use lists instead of arrays.
+* [Jan Hoek](https://github.com/jhoek) for your thoughts on aligning the parameters of `Test-BcAppXliffTranslations` (via DM).
+* [Sergio Castelluccio](https://github.com/eclipses) for reporting `Test-BcAppXliffTranslations` not failing builds in Azure DevOps if errors are detected in a specific scenario (via DM).
+
 ## [1.4.0] 29-11-2021
 
 * Changes in usage of `Resolve-Path` for scenarios where the `-targetLanguage` parameter of `Sync-XliffTranslations` is used.
