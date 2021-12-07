@@ -23,6 +23,9 @@
   Specifies whether the command should report progress.
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
 #>
 function Test-XliffTranslations {
     Param (
@@ -48,8 +51,11 @@ function Test-XliffTranslations {
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
         [switch] $printProblems,
-        [switch] $PassThru
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
+
+    Write-Verbose "Passed parameters:`n$($PsBoundParameters | Out-String)"
 
     # Abort if both $checkForMissing and $checkForProblems are missing.
     if (-not $checkForMissing -and -not $checkForProblems) {
@@ -73,8 +79,8 @@ function Test-XliffTranslations {
         $onePercentCount = 1;
     }
 
-    [System.Xml.XmlNode[]] $missingTranslationUnits = @();
-    [System.Xml.XmlNode[]] $needWorkTranslationUnits = @();
+    $missingTranslationUnits = New-Object -TypeName 'System.Collections.Generic.List[System.Xml.XmlNode]'
+    $needWorkTranslationUnits = New-Object -TypeName 'System.Collections.Generic.List[System.Xml.XmlNode]'
     [bool] $problemResolvedInFile = $false;
 
     Write-Host "Processing unit nodes... (Please be patient)";
@@ -105,7 +111,7 @@ function Test-XliffTranslations {
         if ($checkForMissing) {
             if (HasMissingTranslation -targetDocument $targetDocument -unit $unit -missingTranslationText $missingTranslation) {
                 $targetDocument.SetState($unit, [XlfTranslationState]::MissingTranslation);
-                $missingTranslationUnits += $unit;
+                $missingTranslationUnits.Add($unit);
             }
 
         }
@@ -113,7 +119,7 @@ function Test-XliffTranslations {
         if ($checkForProblems -and $translationRules) {
             if (HasProblem -targetDocument $targetDocument -unit $unit -enabledRules $translationRules) {
                 $targetDocument.SetState($unit, [XlfTranslationState]::NeedsWorkTranslation);
-                $needWorkTranslationUnits += $unit;
+                $needWorkTranslationUnits.Add($unit);
             }
 
             # Check for resolved problem (to delete XLIFF Sync note)
@@ -136,7 +142,7 @@ function Test-XliffTranslations {
             }
 
             $missingTranslationUnits | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
@@ -152,7 +158,7 @@ function Test-XliffTranslations {
             }
 
             $needWorkTranslationUnits | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
@@ -163,7 +169,8 @@ function Test-XliffTranslations {
         $targetDocument.SaveToFilePath($targetPath);
     }
 
-    return $missingTranslationUnits + $needWorkTranslationUnits;
+    $missingTranslationUnits
+    $needWorkTranslationUnits;
 }
 
 function HasMissingTranslation {

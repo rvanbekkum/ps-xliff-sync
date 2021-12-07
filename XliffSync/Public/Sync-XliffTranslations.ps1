@@ -47,6 +47,9 @@
   Specifies whether the command should report progress.
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
 #>
 function Sync-XliffTranslations {
     Param (
@@ -83,15 +86,19 @@ function Sync-XliffTranslations {
         [ValidateSet('no', 'error', 'warning')]
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
-        [switch] $printProblems
+        [switch] $printProblems,
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
+
+    Write-Verbose "Passed parameters:`n$($PsBoundParameters | Out-String)";
 
     # Abort if both $targetPath and $targetLanguage are missing.
     if (-not $targetPath -and -not $targetLanguage) {
         throw "Missing -targetPath or -targetLanguage parameter.";
     }
     if ($targetPath -and (-not (Test-Path $targetPath))) {
-        throw "File $targetPath could not be found."
+        throw "File $targetPath could not be found.";
     }
 
     Write-Host "Loading source document $sourcePath";
@@ -105,12 +112,12 @@ function Sync-XliffTranslations {
 
     [XlfDocument] $targetDocument = $null;
     if (-not $targetPath) {
-        $targetPath = (Resolve-Path $sourcePath) -replace '(\.g)?\.xlf', ".$targetLanguage.xlf"
+        $targetPath = (Resolve-Path $sourcePath) -replace '(\.g)?\.xlf', ".$targetLanguage.xlf";
     }
 
     if (Test-Path $targetPath) {
         Write-Host "Loading target document $targetPath";
-        $targetDocument = [XlfDocument]::LoadFromPath($targetPath); ;
+        $targetDocument = [XlfDocument]::LoadFromPath($targetPath);
     } else {
         Write-Host "Creating new document for language '$targetLanguage'";
         $targetDocument = [XlfDocument]::CreateCopyFrom($mergedDocument, $targetLanguage);
@@ -141,10 +148,10 @@ function Sync-XliffTranslations {
     if ($onePercentCount -eq 0) {
         $onePercentCount = 1;
     }
-    [System.Xml.XmlNode[]] $detectedSourceTextChanges = @();
+    $detectedSourceTextChanges = New-Object -TypeName 'System.Collections.Generic.List[System.Xml.XmlNode]';
 
     Write-Host "Processing unit nodes... (Please be patient)";
-    [string] $progressMessage = "Syncing translation units."
+    [string] $progressMessage = "Syncing translation units.";
     if ($reportProgress) {
         if ($AzureDevOps -ne 'no') {
             Write-Host "##vso[task.setprogress value=0;]$progressMessage";
@@ -253,7 +260,7 @@ function Sync-XliffTranslations {
                 if ($mergedSourceText -ne $origSourceText) {
                     $mergedDocument.SetXliffSyncNote($unit, 'Source text has changed. Please review the translation.');
                     $mergedDocument.SetState($unit, [XlfTranslationState]::NeedsWorkTranslation);
-                    $detectedSourceTextChanges += $unit;
+                    $detectedSourceTextChanges.Add($unit);
                 }
             }
         }
@@ -269,12 +276,14 @@ function Sync-XliffTranslations {
             }
 
             $detectedSourceTextChanges | ForEach-Object {
-                Write-Host ($detectedMessage -f $_.id);
+                Write-Host ($detectedMessage -f (Invoke-Command -ScriptBlock $FormatTranslationUnit -ArgumentList $_));
             }
         }
     }
 
-    Write-Host "Saving document to $targetPath"
+    Write-Host "Saving document to $targetPath";
     $mergedDocument.SaveToFilePath($targetPath);
+
+    $detectedSourceTextChanges;
 }
 Export-ModuleMember -Function Sync-XliffTranslations

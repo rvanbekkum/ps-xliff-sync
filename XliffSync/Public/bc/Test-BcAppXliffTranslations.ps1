@@ -21,6 +21,13 @@
   Specifies whether the command should print all detected problems.
  .Parameter printUnitsWithErrors
   Specifies whether the command should print the units with errors.
+ .Parameter FormatTranslationUnit
+  A scriptblock that determines how translation units are represented in warning/error messages.
+  By default, the ID of the translation unit is returned.
+ .Parameter syncAdditionalParameters
+  Specifies additional parameters to pass as arguments to the Sync-XliffTranslations function that is invoked by this function.
+ .Parameter testAdditionalParameters
+ Specifies additional parameters to pass as arguments to the Test-XliffTranslations function that is invoked by this function.
 #>
 function Test-BcAppXliffTranslations {
     Param(
@@ -39,7 +46,11 @@ function Test-BcAppXliffTranslations {
         [string] $AzureDevOps = 'warning',
         [switch] $reportProgress,
         [switch] $printProblems,
-        [switch] $printUnitsWithErrors
+        [switch] $printUnitsWithErrors,
+        [ValidateNotNull()]
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
+        $syncAdditionalParameters = @{},
+        $testAdditionalParameters = @{}
     )
 
     if ((-not $appFolders) -or ($appFolders.Length -eq 0)) {
@@ -48,7 +59,7 @@ function Test-BcAppXliffTranslations {
     }
 
     Sort-AppFoldersByDependencies -appFolders $appFolders -baseFolder $buildProjectFolder -WarningAction SilentlyContinue | ForEach-Object {
-        Write-Host "Checking translations for $_"
+        Write-Host "##[group]Checking translations for `"$_`""
         $appProjectFolder = Join-Path $buildProjectFolder $_
         $appTranslationsFolder = Join-Path $appProjectFolder "Translations"
         Write-Host "Retrieving translation files from $appTranslationsFolder"
@@ -58,6 +69,8 @@ function Test-BcAppXliffTranslations {
         $allUnitsWithIssues = @()
 
         foreach ($targetXliffFile in $targetXliffFiles) {
+            Write-Host "##[section]Processing `"$($targetXliffFile.BaseName)`""
+            $unitsWithIssues = @()
             [string]$AzureDevOpsSeverityForFile = $AzureDevOps
             if (($AzureDevOps -eq 'error') -and ($restrictErrorsToLanguages.Length -gt 0)) {
                 if ($null -eq ($restrictErrorsToLanguages | Where-Object { $targetXliffFile.Name -match $_ })) {
@@ -67,12 +80,13 @@ function Test-BcAppXliffTranslations {
             }
 
             Write-Host "Syncing to file $($targetXliffFile.FullName)"
-            Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems
+            $unitsWithIssues += Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems -FormatTranslationUnit $FormatTranslationUnit @syncAdditionalParameters
             Write-Host "Checking translations in file $($targetXliffFile.FullName)"
-            $unitsWithIssues = Test-XliffTranslations -targetPath $targetXliffFile.FullName -checkForMissing -checkForProblems -translationRules $translationRules -translationRulesEnableAll:$translationRulesEnableAll -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems
+            $unitsWithIssues += Test-XliffTranslations -targetPath $targetXliffFile.FullName -checkForMissing -checkForProblems -translationRules $translationRules -translationRulesEnableAll:$translationRulesEnableAll -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -FormatTranslationUnit $FormatTranslationUnit -printProblems:$printProblems @testAdditionalParameters
 
-            if ($unitsWithIssues.Count -gt 0) {
-                Write-Host "Issues detected in file $($targetXliffFile.FullName)."
+            $fileIssueCount = $unitsWithIssues.Count
+            if ($fileIssueCount -gt 0) {
+                Write-Host "$fileIssueCount issues detected in file $($targetXliffFile.FullName)."
                 if ($printUnitsWithErrors) {
                     Write-Host "Units with issues:"
                     Write-Host $unitsWithIssues
@@ -88,8 +102,9 @@ function Test-BcAppXliffTranslations {
             Write-Host "##vso[task.logissue type=warning]There are no target translation files for $($baseXliffFile.Name)"
         }
 
-        if (($AzureDevOps -eq 'error') -and ($allUnitsWithIssues.Count -gt 0)) {
-            throw "Issues detected in translation files!"
+        $issueCount = $allUnitsWithIssues.Count
+        if (($AzureDevOps -eq 'error') -and ($issueCount -gt 0)) {
+            throw "$issueCount issues detected in translation files!"
         }
     }
 }
