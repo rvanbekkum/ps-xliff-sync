@@ -577,7 +577,7 @@ class XlfDocument {
             return $null;
         }
 
-        [string[]] $translationEntries = $developerNoteText.Split($this.parseFromDeveloperNoteSeparator);
+        [string[]] $translationEntries = [regex]::Split($developerNoteText, [regex]::Escape($this.parseFromDeveloperNoteSeparator))
         [string] $translationText = $null;
 
         for ($i = 0; $i -lt $translationEntries.Length; $i++) {
