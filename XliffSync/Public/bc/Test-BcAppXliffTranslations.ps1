@@ -23,7 +23,7 @@
   Specifies whether the command should print the units with errors.
  .Parameter FormatTranslationUnit
   A scriptblock that determines how translation units are represented in warning/error messages.
-  By default, the ID of the translation unit is returned.
+  By default, the Xliff Generator note and XLIFF Sync note of the translation unit is returned.
  .Parameter syncAdditionalParameters
   Specifies additional parameters to pass as arguments to the Sync-XliffTranslations function that is invoked by this function.
  .Parameter testAdditionalParameters
@@ -48,7 +48,7 @@ function Test-BcAppXliffTranslations {
         [switch] $printProblems,
         [switch] $printUnitsWithErrors,
         [ValidateNotNull()]
-        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text' },
+        [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) "$($TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text'): $($TranslationUnit.note | Where-Object from -EQ 'XLIFF Sync' | Select-Object -ExpandProperty '#text')" },
         $syncAdditionalParameters = @{},
         $testAdditionalParameters = @{}
     )
@@ -101,6 +101,7 @@ function Test-BcAppXliffTranslations {
         if ($targetXliffFiles.Count -eq 0) {
             Write-Host "##vso[task.logissue type=warning]There are no target translation files for $($baseXliffFile.Name)"
         }
+        Write-Host "##[endgroup]"
 
         $issueCount = $allUnitsWithIssues.Count
         if (($AzureDevOps -eq 'error') -and ($issueCount -gt 0)) {

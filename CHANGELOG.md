@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0] 09-02-2022
+
+* Fixed missing `Write-Host "##[endgroup]"` in `Test-BcAppXliffTranslations`
+* Support for multi-character `-parseFromDeveloperNoteSeparator` by [David FeldHoff](https://github.com/DavidFeldhoff)
+* Changed default value for parameter `-FormatTranslationUnit` in `Test-BcAppXliffTranslations` to show both the Xliff Generator note and XLIFF Sync note for detected problems.
+
+### Thank You (for 1.6.0)
+
+* [David FeldHoff](https://github.com/DavidFeldhoff) for your [Pull Request #29 "Fix splitting if the separator consists of more than one character"](https://github.com/rvanbekkum/ps-xliff-sync/pull/29)
+
 ## [1.5.0] 07-12-2021
 
 * Added `-FormatTranslationUnit` parameter to `Test-XliffTranslations` function. (GitHub issue [#21](https://github.com/rvanbekkum/ps-xliff-sync/issues/21))
