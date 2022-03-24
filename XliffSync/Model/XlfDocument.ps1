@@ -79,7 +79,7 @@ class XlfDocument {
             "1.2" {
                 [System.Xml.XmlNode] $fileNode = [XlfDocument]::GetNode('file', $this.root);
                 if ($fileNode) {
-                    $fileNode.'target-language' = $lng;
+                    $fileNode.SetAttribute('target-language', $lng);
                 }
             }
         }
@@ -704,7 +704,7 @@ class XlfDocument {
         switch ($baseXlfDoc.Version()) {
             "1.2" {
                 $newFileNode = $newRootNode.ChildNodes.Item(0);
-                $newFileNode.'target-language' = $language;
+                $newFileNode.SetAttribute('target-language', $language);
                 break;
             }
             "2.0" {
