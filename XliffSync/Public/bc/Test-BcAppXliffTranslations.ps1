@@ -62,6 +62,9 @@ function Test-BcAppXliffTranslations {
         Write-Host "##[group]Checking translations for `"$_`""
         $appProjectFolder = Join-Path $buildProjectFolder $_
         $appTranslationsFolder = Join-Path $appProjectFolder "Translations"
+        if (-not (Test-Path $appTranslationsFolder)) {
+            break
+        }
         Write-Host "Retrieving translation files from $appTranslationsFolder"
         $baseXliffFile = Get-ChildItem -Path $appTranslationsFolder -Filter '*.g.xlf'
         Write-Host "Base translation file $($baseXliffFile.FullName)"
