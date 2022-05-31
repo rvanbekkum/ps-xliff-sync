@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.0] 31-05-2022
+
+* Fix for "attribute `target-language` cannot be found" bug by [Timotheus Pokorra](https://github.com/tpokorra) (GitHub issue [#30](https://github.com/rvanbekkum/ps-xliff-sync/issues/30))
+* Fix for `SetXliffSyncNote` method which inserted the `source`-node another time when whitespace should _not_ be preserved.
+
+### Thank You (for 1.7.0)
+
+* [Timotheus Pokorra](https://github.com/tpokorra) for your [Pull Request #31 "Set attribute target-language even if it does not exist yet"](https://github.com/rvanbekkum/ps-xliff-sync/pull/31)
+
 ## [1.6.0] 09-02-2022
 
 * Fixed missing `Write-Host "##[endgroup]"` in `Test-BcAppXliffTranslations`
