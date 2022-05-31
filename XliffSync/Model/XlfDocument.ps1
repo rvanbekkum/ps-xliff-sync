@@ -423,11 +423,15 @@ class XlfDocument {
         if ($existingNote) {
             $notesParent.ReplaceChild($noteNode, $existingNote);
         } elseif ($targetChildNode -and ($this.Version() -eq "1.2")) {
-            $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
+            if ($unit.Attributes["xml:space"] -and ($unit.Attributes["xml:space"].Value -eq "preserve")) {
+                $unit.InsertAfter($noteNode, $targetChildNode.NextSibling);
 
-            # Add the same whitespace after the note.
-            $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($targetChildNode.PreviousSibling, $true);
-            $unit.InsertAfter($newWhiteSpaceNode, $noteNode);
+                # Add the same whitespace after the note.
+                $newWhiteSpaceNode = $this.root.OwnerDocument.ImportNode($targetChildNode.PreviousSibling, $true);
+                $unit.InsertAfter($newWhiteSpaceNode, $noteNode);
+            } else {
+                $unit.InsertAfter($noteNode, $targetChildNode);
+            }
         } else {
             $notesParent.AppendChild($noteNode);
         }
