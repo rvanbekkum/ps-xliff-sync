@@ -105,7 +105,9 @@ function Test-BcAppXliffTranslations {
 
         $issueCount = $allUnitsWithIssues.Count
         if (($AzureDevOps -eq 'error') -and ($issueCount -gt 0)) {
-            throw "$issueCount issues detected in translation files!"
+            Write-Host "##vso[task.logissue type=error]$issueCount issues detected in translation files!"
+            Write-Host "##vso[task.complete result=Failed;]Make step fail"
+            exit 0
         }
     }
 }
