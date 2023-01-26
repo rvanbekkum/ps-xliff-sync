@@ -31,17 +31,19 @@
   Specifies whether (initial) translations should be parsed from the translation unit's developer note (note: only when there is not already an existing translation in the target).
  .Parameter parseFromDeveloperNoteOverwrite
   Specifies whether translations parsed from the developer note should always overwrite existing translations.
-  .Parameter copyFromSource
+ .Parameter parseFromDeveloperNoteTrimCharacters
+  Specifies which characters should be trimmed from translations that are parsed from the developer note.
+ .Parameter copyFromSource
   Specifies whether (initial) translations should be copied from the source text (note: only when there is not already an existing translation in the target).
-  .Parameter copyFromSourceOverwrite
+ .Parameter copyFromSourceOverwrite
   Specifies whether translations copied from the source text should overwrite existing translations.
-  .Parameter detectSourceTextChanges
+ .Parameter detectSourceTextChanges
   Specifies whether changes in the source text of a trans-unit should be detected. If a change is detected, the target state is changed to needs-adaptation and a note is added to indicate the translation should be reviewed.
-  .Parameter missingTranslation
+ .Parameter missingTranslation
   Specifies the target tag content for units where the translation is missing.
-  .Parameter unitMaps
+ .Parameter unitMaps
   Specifies for which search purposes this command should create in-memory maps in preparation of syncing.
-  .Parameter AzureDevOps
+ .Parameter AzureDevOps
   Specifies whether to generate Azure DevOps Pipeline compatible output. This setting determines the severity of errors.
  .Parameter reportProgress
   Specifies whether the command should report progress.
@@ -73,6 +75,7 @@ function Sync-XliffTranslations {
         [switch] $parseFromDeveloperNote,
         [switch] $parseFromDeveloperNoteOverwrite,
         [string] $parseFromDeveloperNoteSeparator = "|",
+        [char[]] $parseFromDeveloperNoteTrimCharacters,
         [switch] $copyFromSource,
         [switch] $copyFromSourceOverwrite,
         [Parameter(Mandatory = $false)]
@@ -243,6 +246,23 @@ function Sync-XliffTranslations {
 
             if ((-not $translation) -and $shouldParseFromDevNote) {
                 $translation = $mergedDocument.GetUnitTranslationFromDeveloperNote($unit);
+                if ($translation -and ($null -ne $parseFromDeveloperNoteTrimCharacters)) {
+                    $startIndex = 0;
+                    $endIndex = $translation.Length;
+
+                    while (($startIndex -lt $endIndex) -and ($parseFromDeveloperNoteTrimCharacters.IndexOf($translation[$startIndex]) -ge 0)) {
+                        $startIndex += 1;
+                        Write-Host $startIndex
+                    }
+                    while (($endIndex -gt $startIndex) -and ($parseFromDeveloperNoteTrimCharacters.IndexOf($translation[$endIndex - 1]) -ge 0)) {
+                        $endIndex -= 1;
+                        Write-Host $endIndex
+                    }
+
+                    if (($startIndex -gt 0) -or ($endIndex -lt $translation.Length)) {
+                        $translation = $translation.Substring($startIndex, $endIndex - $startIndex);
+                    }
+                }
             }
             if ((-not $translation) -and $shouldCopyFromSource) {
                 $translation = $mergedDocument.GetUnitSourceText($unit);
