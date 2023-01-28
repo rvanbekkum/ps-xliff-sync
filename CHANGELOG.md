@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0] 28-01-2023
+
+* Added `-parseFromDeveloperNoteTrimCharacters` parameter to the `Sync-XliffTranslations` command (GitHub issue [#39](https://github.com/rvanbekkum/ps-xliff-sync/issues/39))
+
+### Thank You (for 1.8.0)
+
+* [Frédéric Vercaemst](https://github.com/fvet) for filing [Issue #39 "parseFromDeveloperNoteTrimCharacters" parameter missing in Sync-XliffTranslations / Test-BcAppXliffTranslations](https://github.com/rvanbekkum/ps-xliff-sync/issues/39)
+
 ## [1.7.0] 31-05-2022
 
 * Fix for "attribute `target-language` cannot be found" bug by [Timotheus Pokorra](https://github.com/tpokorra) (GitHub issue [#30](https://github.com/rvanbekkum/ps-xliff-sync/issues/30))
