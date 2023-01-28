@@ -4,6 +4,8 @@
 [![XliffSync](https://img.shields.io/powershellgallery/v/XliffSync.svg?style=flat-square&label=XliffSync)](https://www.powershellgallery.com/packages/XliffSync/)
 [![Downloads](https://img.shields.io/powershellgallery/dt/XliffSync.svg?style=flat-square&color=blue)](https://www.powershellgallery.com/packages/XliffSync/)
 
+<a href="https://www.buymeacoffee.com/robvanbekkum" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
 A module to keep XLIFF translation files in sync with a specified, automatically generated base-XLIFF file.
 
 This PowerShell module is based off the [XLIFF Sync](https://github.com/rvanbekkum/vsc-xliff-sync) VSCode extension.
@@ -40,16 +42,19 @@ Sync-XliffTranslations -sourcePath "C:\MyProject\My Project.g.xlf" -targetPath "
 The function will try to find matching trans-units and translations within a target file as follows:
 
 1. Finding trans-units:
+>
 > 1. By Id
 > 2. By XLIFF Generator Note & Source (controlled by switch `findByXliffGeneratorNoteAndSource`)
 > 3. By XLIFF Generator Note & Developer Note (controlled by switch `findByXliffGeneratorAndDeveloperNote`)
 > 4. By XLIFF Generator Note (controlled by switch `findByXliffGeneratorNote`)
 
 2. Finding translations:
+>
 > 5. By Source & Developer Note (controlled by switch `findBySourceAndDeveloperNote`)
 > 6. By Source (controlled by switch `findBySource`)
 
 3. Initial translation:
+>
 > 7. Parse from Developer Note (controlled by switch `parseFromDeveloperNote`)
 > 8. Copy from Source if source-language = target-language (controlled by switch `copyFromSource`)
 
