@@ -252,11 +252,9 @@ function Sync-XliffTranslations {
 
                     while (($startIndex -lt $endIndex) -and ($parseFromDeveloperNoteTrimCharacters.IndexOf($translation[$startIndex]) -ge 0)) {
                         $startIndex += 1;
-                        Write-Host $startIndex
                     }
                     while (($endIndex -gt $startIndex) -and ($parseFromDeveloperNoteTrimCharacters.IndexOf($translation[$endIndex - 1]) -ge 0)) {
                         $endIndex -= 1;
-                        Write-Host $endIndex
                     }
 
                     if (($startIndex -gt 0) -or ($endIndex -lt $translation.Length)) {
