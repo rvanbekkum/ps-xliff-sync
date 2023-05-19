@@ -49,6 +49,8 @@
   Specifies whether the command should report progress.
  .Parameter printProblems
   Specifies whether the command should print all detected problems.
+ .Parameter useSelfClosingTags
+  Specifies whether the updated target document should use self-closing XML tags.
  .Parameter FormatTranslationUnit
   A scriptblock that determines how translation units are represented in warning/error messages.
   By default, the ID of the translation unit is returned.
@@ -90,6 +92,7 @@ function Sync-XliffTranslations {
         [string] $AzureDevOps = 'no',
         [switch] $reportProgress,
         [switch] $printProblems,
+        [switch] $useSelfClosingTags,
         [ValidateNotNull()]
         [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) $TranslationUnit.id }
     )
@@ -112,6 +115,7 @@ function Sync-XliffTranslations {
     $mergedDocument.parseFromDeveloperNoteSeparator = $parseFromDeveloperNoteSeparator;
     $mergedDocument.preserveTargetAttributes = $preserveTargetAttributes;
     $mergedDocument.preserveTargetAttributesOrder = $preserveTargetAttributesOrder;
+    $mergedDocument.useSelfClosingTags = $useSelfClosingTags;
 
     [XlfDocument] $targetDocument = $null;
     if (-not $targetPath) {
