@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.0] 19-05-2023
+
+* Added `-useSelfClosingTags` parameter to the `Sync-XliffTranslations` command (GitHub issue [#38](https://github.com/rvanbekkum/ps-xliff-sync/issues/38))
+* Added `-processAppFoldersSortedByDependencies` parameter to the `Test-BcAppXliffTranslations` command.
+
+### Thank You (for 1.9.0)
+
+* [Frédéric Vercaemst](https://github.com/fvet) for filing [Issue #38 Different Developer closing note when syncing xliffs via PS vs VS Code](https://github.com/rvanbekkum/ps-xliff-sync/issues/38)
+
 ## [1.8.0] 28-01-2023
 
 * Added `-parseFromDeveloperNoteTrimCharacters` parameter to the `Sync-XliffTranslations` command (GitHub issue [#39](https://github.com/rvanbekkum/ps-xliff-sync/issues/39))

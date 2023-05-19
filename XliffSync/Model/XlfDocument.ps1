@@ -18,6 +18,7 @@ class XlfDocument {
     [boolean] $preserveTargetAttributesOrder;
     [string] $parseFromDeveloperNoteSeparator;
     [string] $missingTranslation;
+    [boolean] $useSelfClosingTags;
 
     [boolean] Valid() {
         $hasRoot = $null -ne $this.root;
@@ -638,6 +639,13 @@ class XlfDocument {
         if (Test-Path $filePath) {
             $filePath = Resolve-Path $filePath
         }
+
+        if ($this.useSelfClosingTags) {
+            foreach ($elem in $this.root.OwnerDocument.SelectNodes("descendant::*[not(node())]")) {
+                $elem.IsEmpty = $true;
+            }
+        }
+
         $this.root.OwnerDocument.Save($filePath);
     }
 

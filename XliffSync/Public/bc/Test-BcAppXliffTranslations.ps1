@@ -21,6 +21,10 @@
   Specifies whether the command should print all detected problems.
  .Parameter printUnitsWithErrors
   Specifies whether the command should print the units with errors.
+ .Parameter useSelfClosingTags
+  Specifies whether the updated target document should use self-closing XML tags.
+ .Parameter processAppFoldersSortedByDependencies
+  Specifies whether the command should process the app folders in order of app dependencies (uses module BcContainerHelper for sorting).
  .Parameter FormatTranslationUnit
   A scriptblock that determines how translation units are represented in warning/error messages.
   By default, the Xliff Generator note and XLIFF Sync note of the translation unit is returned.
@@ -47,6 +51,8 @@ function Test-BcAppXliffTranslations {
         [switch] $reportProgress,
         [switch] $printProblems,
         [switch] $printUnitsWithErrors,
+        [switch] $useSelfClosingTags,
+        [switch] $processAppFoldersSortedByDependencies,
         [ValidateNotNull()]
         [ScriptBlock]$FormatTranslationUnit = { param($TranslationUnit) "$($TranslationUnit.note | Where-Object from -EQ 'Xliff Generator' | Select-Object -ExpandProperty '#text'): $($TranslationUnit.note | Where-Object from -EQ 'XLIFF Sync' | Select-Object -ExpandProperty '#text')" },
         $syncAdditionalParameters = @{},
@@ -58,7 +64,11 @@ function Test-BcAppXliffTranslations {
         Write-Host "-appFolders not explicitly set, using subfolders of $($buildProjectFolder): $appFolders"
     }
 
-    Sort-AppFoldersByDependencies -appFolders $appFolders -baseFolder $buildProjectFolder -WarningAction SilentlyContinue | ForEach-Object {
+    if ($processAppFoldersSortedByDependencies) {
+        $appFolders = Sort-AppFoldersByDependencies -appFolders $appFolders -baseFolder $buildProjectFolder -WarningAction SilentlyContinue
+    }
+
+    $appFolders | ForEach-Object {
         Write-Host "##[group]Checking translations for `"$_`""
         $appProjectFolder = Join-Path $buildProjectFolder $_
         $appTranslationsFolder = Join-Path $appProjectFolder "Translations"
@@ -80,7 +90,7 @@ function Test-BcAppXliffTranslations {
             }
 
             Write-Host "Syncing to file $($targetXliffFile.FullName)"
-            $unitsWithIssues += Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems -FormatTranslationUnit $FormatTranslationUnit @syncAdditionalParameters
+            $unitsWithIssues += Sync-XliffTranslations -sourcePath $baseXliffFile.FullName -targetPath $targetXliffFile.FullName -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -printProblems:$printProblems -useSelfClosingTags:$useSelfClosingTags -FormatTranslationUnit $FormatTranslationUnit @syncAdditionalParameters
             Write-Host "Checking translations in file $($targetXliffFile.FullName)"
             $unitsWithIssues += Test-XliffTranslations -targetPath $targetXliffFile.FullName -checkForMissing -checkForProblems -translationRules $translationRules -translationRulesEnableAll:$translationRulesEnableAll -AzureDevOps $AzureDevOpsSeverityForFile -reportProgress:$reportProgress -FormatTranslationUnit $FormatTranslationUnit -printProblems:$printProblems @testAdditionalParameters
 
