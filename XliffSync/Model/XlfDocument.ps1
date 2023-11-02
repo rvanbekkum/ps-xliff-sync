@@ -640,10 +640,8 @@ class XlfDocument {
             $filePath = Resolve-Path $filePath
         }
 
-        if ($this.useSelfClosingTags) {
-            foreach ($elem in $this.root.OwnerDocument.SelectNodes("descendant::*[not(node())]")) {
-                $elem.IsEmpty = $true;
-            }
+        foreach ($elem in $this.root.OwnerDocument.SelectNodes("descendant::*[not(node())]")) {
+            $elem.IsEmpty = $this.useSelfClosingTags;
         }
 
         $this.root.OwnerDocument.Save($filePath);
