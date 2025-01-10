@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.0] 10-01-2025
+
+* Changed severity of the "There are no target translation files" message in `Test-BcAppXliffTranslations` to be based on the `-AzureDevOps` parameter.
+
+### Thank You (for 1.10.0)
+
+* [Christian Hovenbitzer](https://github.com/ChristianHovenbitzer) for your [Pull Request #42 "Change severity of "There are no target translation files" message in Test-BcAppXliffTranslations to be based on -AzureDevOps parameter"](https://github.com/rvanbekkum/ps-xliff-sync/pull/42)
+
 ## [1.9.0] 19-05-2023
 
 * Added `-useSelfClosingTags` parameter to the `Sync-XliffTranslations` command (GitHub issue [#38](https://github.com/rvanbekkum/ps-xliff-sync/issues/38))
