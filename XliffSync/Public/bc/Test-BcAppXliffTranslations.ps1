@@ -108,7 +108,7 @@ function Test-BcAppXliffTranslations {
             }
         }
 
-        if ($targetXliffFiles.Count -eq 0) {
+        if (@("error","warning").Contains($AzureDevOps) -and ($targetXliffFiles.Count -eq 0)) {
             Write-Host "##vso[task.logissue type=$AzureDevOps]There are no target translation files for $($baseXliffFile.Name)"
         }
         Write-Host "##[endgroup]"
