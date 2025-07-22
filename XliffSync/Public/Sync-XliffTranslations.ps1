@@ -37,6 +37,10 @@
   Specifies whether (initial) translations should be copied from the source text (note: only when there is not already an existing translation in the target).
  .Parameter copyFromSourceOverwrite
   Specifies whether translations copied from the source text should overwrite existing translations.
+ .Parameter copyFromTarget
+  Specifies whether (initial) translations should be copied from the target text (note: only when there is not already an existing translation in the target).
+ .Parameter copyFromTargetOverwrite
+  Specifies whether translations copied from the target text should overwrite existing translations.
  .Parameter detectSourceTextChanges
   Specifies whether changes in the source text of a trans-unit should be detected. If a change is detected, the target state is changed to needs-adaptation and a note is added to indicate the translation should be reviewed.
  .Parameter missingTranslation
@@ -80,6 +84,8 @@ function Sync-XliffTranslations {
         [char[]] $parseFromDeveloperNoteTrimCharacters,
         [switch] $copyFromSource,
         [switch] $copyFromSourceOverwrite,
+        [switch] $copyFromTarget,
+        [switch] $copyFromTargetOverwrite,
         [Parameter(Mandatory = $false)]
         [boolean] $detectSourceTextChanges = $true,
         [Parameter(Mandatory = $false)]
@@ -236,7 +242,7 @@ function Sync-XliffTranslations {
             }
         }
 
-        if ((-not $translation) -and ($copyFromSource -or $parseFromDeveloperNote)) {
+        if ((-not $translation) -and ($copyFromSource -or $copyFromTarget -or $parseFromDeveloperNote)) {
             [bool] $hasNoTranslation = $false;
             if ($targetUnit) {
                 [string] $targetTranslation = $targetDocument.GetUnitTranslation($targetUnit);
@@ -247,6 +253,7 @@ function Sync-XliffTranslations {
 
             [bool] $shouldParseFromDevNote = $parseFromDeveloperNote -and ($hasNoTranslation -or $parseFromDeveloperNoteOverwrite);
             [bool] $shouldCopyFromSource = $copyFromSource -and ($hasNoTranslation -or $copyFromSourceOverwrite);
+            [bool] $shouldCopyFromTarget = $copyFromTarget -and ($hasNoTranslation -or $copyFromTargetOverwrite);
 
             if ((-not $translation) -and $shouldParseFromDevNote) {
                 $translation = $mergedDocument.GetUnitTranslationFromDeveloperNote($unit);
@@ -268,6 +275,9 @@ function Sync-XliffTranslations {
             }
             if ((-not $translation) -and $shouldCopyFromSource) {
                 $translation = $mergedDocument.GetUnitSourceText($unit);
+            }
+            if ((-not $translation) -and $shouldCopyFromTarget) {
+                $translation = $mergedDocument.GetUnitTranslation($unit);
             }
         }
 
