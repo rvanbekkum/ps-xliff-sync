@@ -318,7 +318,7 @@ class XlfDocument {
 
         if ($needsTranslation -and $targetNode) {
             if ($translation) {
-                $targetNode.InnerText = $translation;
+                $targetNode.InnerXml = $translation;
                 if ($this.Version() -eq "1.2") {
                     $this.UpdateStateAttributes($targetNode, [XlfTranslationState]::Translated);
                 }
@@ -548,7 +548,7 @@ class XlfDocument {
         if ((-not $translationNode) -and (-not $translationNode.HasChildNodes)) {
             return $null;
         }
-        return $translationNode.ChildNodes[0].Value;
+        return $translationNode.InnerXml;
     }
 
     [string] GetUnitDeveloperNote([System.Xml.XmlNode] $unitNode) {
